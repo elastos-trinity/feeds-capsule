@@ -4,8 +4,6 @@ import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.se
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { Events } from 'src/app/services/events.service';
 
-import Web3 from 'web3';
-
 @Injectable()
 export class NFTContractControllerService {
     constructor(

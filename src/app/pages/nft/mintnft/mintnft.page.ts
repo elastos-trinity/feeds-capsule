@@ -13,6 +13,7 @@ import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 
 @Component({
   selector: 'app-mintnft',
@@ -54,12 +55,16 @@ export class MintnftPage implements OnInit {
     // private web3Service:Web3Service,
     private feedService:FeedService,
     public theme:ThemeService,
-    private nftContractControllerService: NFTContractControllerService) { }
+    private nftContractControllerService: NFTContractControllerService,
+    private walletConnectControllerService: WalletConnectControllerService) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
+    if (this.walletConnectControllerService.getAccountAddress() == "")
+      this.walletConnectControllerService.connect();
+
     this.minExpirationDate = UtilService.dateFormat(new Date());
     this.expirationDate = UtilService.dateFormat(new Date(new Date().getTime()+24*60*60*1000));
     this.maxExpirationDate = UtilService.dateFormat(new Date(new Date().getTime()+10*365*24*60*60*1000));
