@@ -19,7 +19,7 @@
       [src]="!theme.darkMode ? './assets/images/dots-three-vertical-dark.svg' : './assets/images/dots-three-vertical-dark.svg'">
        <img  (click)="profiledetail()" [src]="handleImages()" style="border: 1px solid #f8f2ff;overflow:hidden;border-radius:50%;width:56px;height:56px;object-fit:cover;">
        <ion-card-title>{{name}}</ion-card-title>
-       <ion-card-subtitle *ngIf="walletAddressStr!=''" (click)="clickWalletAddr()">{{walletAddressStr}} <ion-icon (click)="copyWalletAddr()" style="vertical-align:middle;" name="copy-outline"></ion-icon></ion-card-subtitle>
+       <ion-card-subtitle *ngIf="walletAddressStr!=''"><span (click)="clickWalletAddr()">{{walletAddressStr}}</span><ion-icon (click)="copyWalletAddr()" style="vertical-align:middle;margin-left:5px;" name="copy-outline"></ion-icon></ion-card-subtitle>
        <span class="connectWallet" (click)="connectWallet()" *ngIf="walletAddressStr===''">{{"common.connectWallet" | translate}}</span>
     </ion-card>
     <ion-ripple-effect></ion-ripple-effect>
