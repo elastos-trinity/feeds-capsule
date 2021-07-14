@@ -45,6 +45,7 @@
     "@videogular/ngx-videogular": "^3.0.1",
     "@walletconnect/web3-provider": "^1.4.1",
     "@ygoe/msgpack": "^1.0.2",
+    "angular-svg-round-progressbar": "^7.0.0",
     "angularx-qrcode": "11.0.0",
     "cordova-android": "9.0.0",
     "cordova-ios": "6.2.0",
