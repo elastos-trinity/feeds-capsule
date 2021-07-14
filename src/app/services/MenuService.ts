@@ -655,20 +655,7 @@ export class MenuService {
 
     async cancelOrder(that:any){
         let saleOrderId  =  this.assItem["saleOrderId"] || ""
-        // let pasarAddr = that.web3Service.getPasarAddr();
-        // let pasarContract = that.web3Service.getPasar();
-        let accountAddress = that.nftContractControllerService.getAccountAddress();
-        let pasarAddr = that.nftContractControllerService.getPasar().getAddress();
-
-        const cancelData = this.nftContractControllerService.getPasar().cancelOrder(saleOrderId);
-        // const cancelTx = {
-        //   from: accountAddress,
-        //   to: pasarAddr,
-        //   value: 0,
-        //   data: cancelData,
-        // };
-        // const { status: cancelStatus } = await that.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
-        let cancelStatus = "";//TODO
+        const cancelStatus = await this.nftContractControllerService.getPasar().cancelOrder(saleOrderId);
         that.native.hideLoading();
         if(cancelStatus!=""&&cancelStatus!=undefined){
          that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.assItem);

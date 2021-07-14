@@ -15,6 +15,7 @@ export class NFTContractParsarService {
     private checkSellerOrderStateInterval: NodeJS.Timer;
     private checkPriceInterval: NodeJS.Timer;
     private checkBuyerOrderStateInterval: NodeJS.Timer;
+    private checkOrderStateInterval: NodeJS.Timer;
 
     constructor(private walletConnectControllerService: WalletConnectControllerService) {
       this.init();
@@ -311,7 +312,7 @@ export class NFTContractParsarService {
       clearInterval(this.checkBuyerOrderStateInterval);
     }
 
-    cancelOrder(orderId){
+    cancelOrder(orderId): Promise<string>{
       return new Promise(async (resolve, reject) => {
         console.log("CancelOrder params",orderId);
 
@@ -320,26 +321,63 @@ export class NFTContractParsarService {
     
         console.log("Calling cancelOrder smart contract through wallet connect", orderdata, transactionParams);
 
+        let order = await this.getOrderById(orderId);
+        let originOrderState = order[2];
+        console.log("order = ", order);
 
         this.pasarContract.methods.cancelOrder(orderId)
           .send(transactionParams)
               .on('transactionHash', (hash) => {
-                resolve(hash);
+                // resolve(hash);
                 console.log("transactionHash", hash);
               })
               .on('receipt', (receipt) => {
-                resolve(receipt);
+                // resolve(receipt);
                 console.log("receipt", receipt);
               })
               .on('confirmation', (confirmationNumber, receipt) => {
-                resolve(receipt);
+                // resolve(receipt);
                 console.log("confirmation", confirmationNumber, receipt);
               })
               .on('error', (error, receipt) => {
-                reject(error);
+                // reject(error);
+                resolve(FAIL);
                 console.error("error", error, receipt);
               });
+
+        this.checkOrderState(orderId, originOrderState, (newOrderState)=>{
+          resolve(SUCCESS);
+        });
       });
+    }
+
+    checkOrderState(orderId, originOrderState, callback:(newOrderState: number)=>void){
+      this.checkOrderStateInterval = setInterval(async () => {
+        console.log("checkSellerOrderState");
+
+        if (!this.checkOrderStateInterval)
+          return ;
+
+        let order = await this.getOrderById(orderId);
+
+        let newOrderState = order[2];
+        console.log("CheckOrderState order info is", order);
+
+        
+        if ( newOrderState != originOrderState){
+          console.log("newIndex is diffrent");
+          clearInterval(this.checkOrderStateInterval);
+          callback(newOrderState);
+          this.checkOrderStateInterval = null;
+          console.log("checkOrderState finish, new order state is ",newOrderState);
+        }
+      }, 5000);
+    }
+
+    cancelCancelOrderProcess(){
+      if (!this.checkOrderStateInterval)
+        return
+      clearInterval(this.checkOrderStateInterval);
     }
 
     async getBuyerByAddr(address){
