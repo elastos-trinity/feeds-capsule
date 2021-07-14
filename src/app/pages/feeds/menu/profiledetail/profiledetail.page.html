@@ -24,7 +24,7 @@
         </ion-col>
       </ion-row>
     </div>
-    <ion-row class="detail-row">
+    <ion-row class="detail-row" *ngIf="walletAddress!=''">
       <ion-col size="12" class="left-col" (click)="clickCollections()">
           <h1>{{'ProfiledetailPage.collections'|translate}}</h1>
           <div class="roundNft">NFT</div>

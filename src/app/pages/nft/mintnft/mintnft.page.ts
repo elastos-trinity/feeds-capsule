@@ -310,7 +310,7 @@ export class MintnftPage implements OnInit {
       result = await this.nftContractControllerService.getSticker().mint(tokenId, supply, uri, royalty);
     }catch(error){
     }
-    
+
     result = result || "";
     if(result=== ""){
       this.native.hideLoading();
@@ -336,7 +336,7 @@ export class MintnftPage implements OnInit {
       result = await this.nftContractControllerService.getSticker().setApprovalForAll(accountAddress, pasarAddress, true);
     }catch(error){
     }
-    
+
     result = result || "";
     if(result===""){
       this.native.hideLoading();

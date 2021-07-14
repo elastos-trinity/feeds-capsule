@@ -11,6 +11,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 type ProfileDetail = {
   type: string,
@@ -50,6 +51,7 @@ export class ProfiledetailPage implements OnInit {
   public feedsUrl: string = null;
   public elaAddress: string = "";
   public actionSheet:any = null;
+  public walletAddress:string = null;
   constructor(
     private actionSheetController:ActionSheetController,
     private zone: NgZone,
@@ -63,7 +65,8 @@ export class ProfiledetailPage implements OnInit {
     private platform:Platform,
     private storageService:StorageService,
     private titleBarService: TitleBarService,
-    private viewHelper: ViewHelper
+    private viewHelper: ViewHelper,
+    private nftContractControllerService:NFTContractControllerService
   ) {
 
     }
@@ -115,6 +118,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.walletAddress = this.nftContractControllerService.getAccountAddress() || "";
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
