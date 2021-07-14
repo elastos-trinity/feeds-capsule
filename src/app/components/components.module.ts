@@ -39,6 +39,8 @@ import { ShareModule } from 'src/app/share/share.module';
 
 import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
+import {RoundProgressModule} from 'angular-svg-round-progressbar';
+
 
 @NgModule({
   imports: [
@@ -51,7 +53,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     TranslateModule,
     IonicModule,
     ShareModule,
-    QRCodeModule
+    QRCodeModule,
+    RoundProgressModule
   ],
 
   declarations: [

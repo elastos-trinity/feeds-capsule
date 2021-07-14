@@ -1,9 +1,26 @@
 
-<div class="wrap">
+<!-- <div class="wrap">
 	<div class="circle" [ngClass]="{'clip-auto':percent>50}">
 		<div class="percent left" [ngStyle]="rotateNum"></div>
 		<div class="percent right" [ngClass]="{'wth0':percent<=50}"></div>
 	</div>
 	<div class="num"><span></span></div>
+</div> -->
+
+<div class="progress-wrapper">
+    <round-progress
+      [current]="percent"
+      [max]="max"
+      [color]="gradient ? 'url(#gradient)' : color"
+      [background]="background"
+      [radius]="radius"
+      [stroke]="stroke"
+      [semicircle]="semicircle"
+      [rounded]="rounded"
+      [clockwise]="clockwise"
+      [duration]="duration"
+      [animation]="animation"
+      [animationDelay]="animationDelay"
+    ></round-progress>
 </div>
 
