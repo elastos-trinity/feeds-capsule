@@ -96,6 +96,14 @@
         bottom: 47px;
     }
 }
+
+.createTime{
+    position: relative;
+    bottom: 1.5px;
+    font-size: 10px;
+    font-weight: 500;
+   color: #9ca0a4;
+}
 }
 
 
@@ -108,5 +116,9 @@
     }
     .des2{
         color: #fff;
+    }
+
+    .createTime{
+        color:#cfd1f7;
     }
 }

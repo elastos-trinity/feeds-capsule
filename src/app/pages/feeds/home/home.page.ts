@@ -1584,13 +1584,12 @@ clearData(){
 
  async getPaserList(){
   this.feedService.setPasarList([]);
+  this.pasarList = [];
   // let stickerContract = this.web3Service.getSticker();
   // let pasarContract = this.web3Service.getPasar();
   // let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
   let openOrderCount =  await this.nftContractControllerService.getPasar().getOpenOrderCount();
   if(openOrderCount === '0'){
-    this.pasarList = [];
-    this.feedService.setPasarList([]);
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
   }else{
     for(let index = 0;index<openOrderCount;index++){
@@ -1611,8 +1610,10 @@ async getOpenOrderByIndex(index:any){
   let price = openOrder[5];
   let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
   let tokenUri = tokenInfo[3];
+  let createTime = tokenInfo[7];
+  console.log("===createTime===="+createTime);
   let sellerAddr = openOrder[7];
-  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index);
+  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index,createTime);
 }
 
 handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
@@ -1647,7 +1648,7 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
   });
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any,pIndex:any){
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any,pIndex:any,createTime:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -1669,7 +1670,8 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "royalties":royalties,
       "quantity":quantity,
       "thumbnail":thumbnail,
-      "sellerAddr":sellerAddr
+      "sellerAddr":sellerAddr,
+      "createTime":createTime*1000,
   }
   try{
     this.pasarList.splice(pIndex,1,item);

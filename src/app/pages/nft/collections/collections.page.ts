@@ -258,13 +258,11 @@ export class CollectionsPage implements OnInit {
   }
 
  async getNftCreated(){
-
-  //  const stickerContract = this.web3Service.getSticker();
+   this.createdList = [];
+   this.feedService.setOwnCreatedList([]);
    let createAddress = this.nftContractControllerService.getAccountAddress();
    let nftCreatedCount = await this.countOfOwner(createAddress);
    if(nftCreatedCount === "0"){
-       this.createdList = [];
-       this.feedService.setOwnCreatedList([]);
        this.hanleListCace("created");
        this.isLoading = false;
    }else{
@@ -332,15 +330,14 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
 }
 
 async getPurchased(){
-
+  this.purchasedList = [];
+  this.feedService.setOwnPurchasedList(this.purchasedList);
   let createAddress = this.nftContractControllerService.getAccountAddress();
   let buyerInfo = await this.nftContractControllerService.getPasar().getBuyerByAddr(createAddress);
   console.log("BuyerInfo", buyerInfo);
   let buyerAddr = buyerInfo[1];
   let buyOrderCount = buyerInfo[2];
   if(buyOrderCount === '0'){
-    this.purchasedList = [];
-    this.feedService.setOwnPurchasedList(this.purchasedList);
     this.hanleListCace("buy");
     this.isLoading = false;
   }else{
@@ -353,14 +350,13 @@ async getPurchased(){
 }
 
 async getOnSale(){
-
-  // const pasarContract = this.web3Service.getPasar();
+  this.onSaleList = [];
+  this.feedService.setOwnOnSaleList([]);
   let createAddress = this.nftContractControllerService.getAccountAddress();
   let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(createAddress);
   let sellerAddr = sellerInfo[1];
   let orderCount = sellerInfo[3];
   if(orderCount === '0'){
-    this.onSaleList = [];
     this.hanleListCace("sale");
     this.isLoading = false;
   }else{

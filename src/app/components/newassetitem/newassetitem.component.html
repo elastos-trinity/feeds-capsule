@@ -7,8 +7,8 @@
     class="clickMore"
     [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
     (click)="more()"/>
-    <div class="des" (click)="clickItem()"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}}</div>
-    <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:cover;" class="assetsImg"/>
+    <div class="des" (click)="clickItem()"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}} <span class="createTime">{{ handleDisplayTime(assetItem["createTime"]) }}</span></div>
+    <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:contain;" class="assetsImg"/>
     <div class="des1" (click)="clickItem()">{{assetItem['description']}}</div>
     <div class="des2" (click)="clickItem()">{{"MintnftPage.nftQuantity"|translate}}: {{assetItem['quantity']}}</div>
     <div class="like" (click)="clickItem()" *ngIf="assetItem['fixedAmount']!=''">

@@ -10,13 +10,13 @@
                <img src="./assets/images/add.svg">
           </div>
         </div>
-        <div  *ngIf="thumbnail!=''" style="border:none;position:relative;width:100%;height:170px;object-fit: cover;">
+        <div  *ngIf="thumbnail!=''" style="border:none;position:relative;width:100%;height:170px;object-fit: contain;">
          <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>
          <img
          style="width:100%;
          height:180px;
          border-radius:10px;
-         margin-top:10px;object-fit: cover;" [src]="thumbnail">
+         margin-top:10px;object-fit:contain;" [src]="thumbnail">
         </div>
       </ion-item>
 
