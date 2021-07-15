@@ -67,9 +67,9 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
-  private ownOnSaleList:any = [];
-  private ownPurchasedList:any = [];
-  private ownCreatedList:any = []
+  private ownOnSaleList:any = {};
+  private ownPurchasedList:any = {};
+  private ownCreatedList:any = {};
   private pasarList:any = [];
   private collectibleStatus:any = {};
   public bindPublisherAccountType:string = "";

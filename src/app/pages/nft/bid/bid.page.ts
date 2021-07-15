@@ -167,6 +167,11 @@ export class BidPage implements OnInit {
    }
 
    clickBuy(){
+    let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+    if(accountAddress === ""){
+      this.native.toast_trans("common.connectWallet");
+      return;
+    }
     this.native.showLoading("common.waitMoment",(isDismiss)=>{
     },60000).then(()=>{
        this.buy();
@@ -192,30 +197,39 @@ export class BidPage implements OnInit {
       plist  = _.filter(plist,(item)=>{
         return item.saleOrderId != this.saleOrderId;
       });
+
+      plist = _.sortBy(plist,(item:any)=> {
+        return - Number(item.createTime);
+      });
+
       this.feedService.setPasarList(plist);
       this.feedService.setData("feed.nft.pasarList",JSON.stringify(plist));
+
       let createAddress = this.nftContractControllerService.getAccountAddress();
       if(this.sellerAddress === createAddress){
-
-        let olist = this.feedService.getOwnOnSaleList();
+        let allOnSalelist = this.feedService.getOwnOnSaleList();
+        let olist = allOnSalelist[createAddress] || [];
         olist  = _.filter(olist,(item)=>{
           return item.saleOrderId != this.saleOrderId;
         });
-        this.feedService.setOwnOnSaleList(olist);
-        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(olist));
+        this.feedService.setOwnOnSaleList(allOnSalelist);
+        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSalelist));
         //add created
         let cItem:any = _.cloneDeep(this.curAssetItem);
             cItem.fixedAmount = "";
-        let clist = this.feedService.getOwnCreatedList();
+
+        let allCreatedListlist = this.feedService.getOwnCreatedList();
+        let clist = allCreatedListlist[createAddress] || [];
             clist.push(cItem);
-        this.feedService.setOwnCreatedList(clist);
-        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(clist));
+        this.feedService.setOwnCreatedList(allCreatedListlist);
+        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedListlist));
         //add buy
-        let plist = this.feedService.getOwnPurchasedList();
+        let allPurchasedList = this.feedService.getOwnPurchasedList();
+        let plist = allPurchasedList[createAddress] || [];
         let pItem:any = _.cloneDeep(this.curAssetItem);
             plist.push(pItem);
-        this.feedService.setOwnPurchasedList(plist);
-        this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(plist));
+        this.feedService.setOwnPurchasedList(allPurchasedList);
+        this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
       }
       this.native.pop();
     }else{

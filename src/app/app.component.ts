@@ -383,8 +383,8 @@ export class MyApp {
   initNftOwnCreatedList(){
     this.feedService.getData("feed.nft.own.created.list").then((nftOwnCreatedList)=>{
       console.log("=======nftOwnCreatedList======"+nftOwnCreatedList);
-      if(nftOwnCreatedList === null){
-        this.feedService.setOwnCreatedList([]);
+      if(nftOwnCreatedList === null || nftOwnCreatedList === "[]"){
+        this.feedService.setOwnCreatedList({});
         return;
       }
       this.feedService.setOwnCreatedList(JSON.parse(nftOwnCreatedList));
@@ -395,8 +395,9 @@ export class MyApp {
 
   initNftOwnPurchasedList(){
     this.feedService.getData("feed.nft.own.purchased.list").then((nftOwnPurchasedList)=>{
-      if(nftOwnPurchasedList === null){
-        this.feedService.setOwnPurchasedList([]);
+      console.log("=======nftOwnPurchasedList======"+nftOwnPurchasedList);
+      if(nftOwnPurchasedList === null || nftOwnPurchasedList === "[]"){
+        this.feedService.setOwnPurchasedList({});
         return;
       }
       this.feedService.setOwnPurchasedList(JSON.parse(nftOwnPurchasedList));
@@ -407,8 +408,9 @@ export class MyApp {
 
   initNftOwnOnSalelist(){
     this.feedService.getData("feed.nft.own.onSale.list").then((nftOwnOnSalelist)=>{
-      if(nftOwnOnSalelist === null){
-        this.feedService.setOwnOnSaleList([]);
+      console.log("=======nftOwnOnSalelist======"+nftOwnOnSalelist);
+      if(nftOwnOnSalelist === null || nftOwnOnSalelist === "[]"){
+        this.feedService.setOwnOnSaleList({});
         return;
       }
       this.feedService.setOwnOnSaleList(JSON.parse(nftOwnOnSalelist));

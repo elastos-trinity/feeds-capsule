@@ -54,12 +54,14 @@ export class CollectionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.isMine = this.checkChannelIsMine();
-   let list = this.feedService.getOwnCreatedList();
-    if(list.length === 0){
+   this.isMine = this.checkChannelIsMine();
+   let accountAddress = this.nftContractControllerService.getAccountAddress();
+   let allList = this.feedService.getOwnCreatedList();
+   let ownCreatedList  = allList[accountAddress] || [];
+    if(ownCreatedList.length === 0){
       this.getNftCreated();
     }else{
-      this.createdList = list;
+      this.createdList = ownCreatedList;
     }
     this.initTile();
     this.addEvent();
@@ -91,16 +93,19 @@ export class CollectionsPage implements OnInit {
         this.onSaleList =  _.filter(this.onSaleList,(item)=>{
           return item.saleOrderId!=saleOrderId; }
         );
-
-        this.feedService.setOwnOnSaleList(this.onSaleList);
-        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(this.onSaleList));
+        let createAddr = this.nftContractControllerService.getAccountAddress();
+        let allOnSaleList = this.feedService.getOwnOnSaleList();
+        allOnSaleList[createAddr] = this.onSaleList;
+        this.feedService.setOwnOnSaleList(allOnSaleList);
+        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
 
         //add created
          assetItem["fixedAmount"] = "";
-        let clist = this.feedService.getOwnCreatedList();
+         let allCreatedList = this.feedService.getOwnCreatedList();
+        let clist = allCreatedList[createAddr] || [];
             clist.push(assetItem);
-        this.feedService.setOwnCreatedList(clist);
-        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(clist));
+        this.feedService.setOwnCreatedList(allCreatedList);
+        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
 
        //remove pasr
        let pList = this.feedService.getPasarList();
@@ -109,11 +114,12 @@ export class CollectionsPage implements OnInit {
           }
        );
       this.feedService.setPasarList(pList);
-      this.feedService.setData("feed.nft.pasarList",JSON.stringify(pList))
+      this.feedService.setData("feed.nft.pasarList",JSON.stringify(pList));
     });
 
     this.event.subscribe(FeedsEvent.PublishType.nftUpdateList,(obj)=>{
       let type = obj["type"];
+      let createAddr = this.nftContractControllerService.getAccountAddress();
       switch(type){
         case "buy":
           let assItem = obj["assItem"];
@@ -122,15 +128,19 @@ export class CollectionsPage implements OnInit {
           this.purchasedList =  _.filter(this.purchasedList,(item)=>{
             return item.saleOrderId!=saleOrderId; }
           );
-          this.feedService.setOwnPurchasedList(this.purchasedList);
-          this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(this.purchasedList));
 
-          let cList = this.feedService.getOwnCreatedList();
+          let allPurchasedList = this.feedService.getOwnPurchasedList();
+              allPurchasedList[createAddr] =  this.purchasedList;
+          this.feedService.setOwnPurchasedList(allPurchasedList);
+          this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
+
+          let allCreatedList = this.feedService.getOwnCreatedList();
+          let cList = allCreatedList[createAddr] || [];
           cList =  _.filter(cList,(item)=>{
             return item.tokenId!=tokenId; }
           );
-          this.feedService.setOwnCreatedList(cList);
-          this.feedService.setData("feed.nft.own.created.list",JSON.stringify(cList));
+          this.feedService.setOwnCreatedList(allCreatedList);
+          this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
 
           let pList = this.feedService.getPasarList();
           let pItem = _.cloneDeep(assItem);
@@ -138,43 +148,51 @@ export class CollectionsPage implements OnInit {
           this.feedService.setPasarList(pList);
           this.feedService.setData("feed.nft.pasarList",JSON.stringify(pList));
 
-          let olist = this.feedService.getOwnOnSaleList();
+
+          let allOnSaleList = this.feedService.getOwnOnSaleList();
+          let olist = allOnSaleList[createAddr] || [];
           let oItem = _.cloneDeep(assItem);
               olist.push(oItem);
-          this.feedService.setOwnOnSaleList(olist);
-          this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(olist));
+          this.feedService.setOwnOnSaleList(allOnSaleList);
+          this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
           break;
         case "created":
           let cAssItem = obj["assItem"];
           let cSaleOrderId = cAssItem["saleOrderId"] || "";
           if(cSaleOrderId!=""){
-
             this.createdList =  _.filter(this.createdList,(item)=>{
               return item.saleOrderId!=cSaleOrderId; }
             );
-            this.feedService.setOwnCreatedList(this.createdList);
-            this.feedService.setData("feed.nft.own.created.list",JSON.stringify(this.createdList));
+            let allCreatedList = this.feedService.getOwnCreatedList();
+            allCreatedList[createAddr] = this.createdList || [];
+            this.feedService.setOwnCreatedList(allCreatedList);
+            this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
 
-            let purchasedList = this.feedService.getOwnPurchasedList();
+
+            let allPurchasedList = this.feedService.getOwnCreatedList();
+            let  purchasedList = allPurchasedList[createAddr] || [];
                 purchasedList =  _.filter(purchasedList,(item)=>{
-              return item.saleOrderId!=cSaleOrderId;}
-            );
-            this.feedService.setOwnPurchasedList(purchasedList);
-            this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(purchasedList));
+                  return item.saleOrderId!=cSaleOrderId;}
+                );
+            this.feedService.setOwnPurchasedList(allPurchasedList);
+            this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
           }else{
             let tokenId = cAssItem["tokenId"] || "";
             this.createdList =  _.filter(this.createdList,(item)=>{
               return item.tokenId!=tokenId; }
             );
-            this.feedService.setOwnCreatedList(this.createdList);
-            this.feedService.setData("feed.nft.own.created.list",JSON.stringify(this.createdList));
+            let allCreatedList = this.feedService.getOwnCreatedList();
+            allCreatedList[createAddr] = this.createdList || [];
+            this.feedService.setOwnCreatedList(allCreatedList);
+            this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
 
-            let purchasedList = this.feedService.getOwnPurchasedList();
+            let allPurchasedList = this.feedService.getOwnCreatedList();
+            let  purchasedList = allPurchasedList[createAddr] || [];
             purchasedList =  _.filter(purchasedList,(item)=>{
                return item.tokenId!=tokenId;}
             );
-           this.feedService.setOwnPurchasedList(purchasedList);
-           this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(purchasedList));
+           this.feedService.setOwnPurchasedList(allPurchasedList);
+           this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
           }
 
           let cpList = this.feedService.getPasarList();
@@ -183,11 +201,12 @@ export class CollectionsPage implements OnInit {
           this.feedService.setPasarList(cpList);
           this.feedService.setData("feed.nft.pasarList",JSON.stringify(cpList));
 
-          let colist = this.feedService.getOwnOnSaleList();
+          let callOnSaleList = this.feedService.getOwnOnSaleList();
+          let colist = callOnSaleList[createAddr] || [];
           let coItem = _.cloneDeep(cAssItem);
               colist.push(coItem);
-          this.feedService.setOwnOnSaleList(colist);
-          this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(colist));
+          this.feedService.setOwnOnSaleList(callOnSaleList);
+          this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(callOnSaleList));
           break;
       }
 
@@ -203,34 +222,38 @@ export class CollectionsPage implements OnInit {
 
    changeType(type:string){
     this.selectType = type;
+    let accountAddress = this.nftContractControllerService.getAccountAddress();
     switch(type){
       case 'CollectionsPage.created':
         this.isLoading = true;
-        let list = this.feedService.getOwnCreatedList();
-        if(list.length === 0){
+        let allList = this.feedService.getOwnCreatedList();
+        let ownCreatedList  = allList[accountAddress] || [];
+        if(ownCreatedList.length === 0){
           this.getNftCreated();
         }else{
-          this.createdList = list;
+          this.createdList = ownCreatedList;
           this.isLoading = false;
         }
         break;
       case 'CollectionsPage.purchased':
         this.isLoading = true;
-        let plist = this.feedService.getOwnPurchasedList();
-        if(plist.length === 0){
+        let allPurchasedList = this.feedService.getOwnPurchasedList();
+        let ownPurchasedList  = allPurchasedList[accountAddress] || [];
+        if(ownPurchasedList .length === 0){
             this.getPurchased();
         }else{
-          this.purchasedList = plist;
+          this.purchasedList = ownPurchasedList;
           this.isLoading = false;
         }
         break;
       case 'CollectionsPage.onSale':
         this.isLoading = true;
-        let olist = this.feedService.getOwnOnSaleList();
-        if(olist.length === 0){
+        let allOnSaleList = this.feedService.getOwnOnSaleList();
+        let ownOnSaleList  = allOnSaleList[accountAddress] || [];
+        if(ownOnSaleList.length === 0){
             this.getOnSale();
         }else{
-          this.onSaleList = olist;
+          this.onSaleList = ownOnSaleList;
           this.isLoading = false;
         }
         break;
@@ -258,12 +281,15 @@ export class CollectionsPage implements OnInit {
   }
 
  async getNftCreated(){
-   this.createdList = [];
-   this.feedService.setOwnCreatedList([]);
+
    let createAddress = this.nftContractControllerService.getAccountAddress();
+   this.createdList = [];
+   let allList = this.feedService.getOwnCreatedList();
+   allList[createAddress] = [];
+   this.feedService.setOwnCreatedList(allList);
    let nftCreatedCount = await this.countOfOwner(createAddress);
    if(nftCreatedCount === "0"){
-       this.hanleListCace("created");
+       this.hanleListCace("created",createAddress);
        this.isLoading = false;
    }else{
     for(let index = 0 ;index<nftCreatedCount;index++){
@@ -273,19 +299,16 @@ export class CollectionsPage implements OnInit {
     this.handleOwnCreatedData(createAddress,cIndex)
     }
   }
-
  }
 
 async handleOwnCreatedData(createAddress:any,cIndex:any){
-  // let tokenId =  await stickerContract.methods.tokenIdOfOwnerByIndex(createAddress,cIndex).call();
-  // let tokenInfo =  await stickerContract.methods.tokenInfo(tokenId).call();
   let tokenId =  await this.nftContractControllerService.getSticker().tokenIdOfOwnerByIndex(createAddress,cIndex);
   let tokenInfo =  await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
   let price = "";
   let tokenNum =  tokenInfo[2];
   let tokenUri = tokenInfo[3];
   let royaltyOwner = tokenInfo[4];
-  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex);
+  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex,createAddress);
  }
 
  async countOfOwner(createAddress:any){
@@ -294,7 +317,7 @@ async handleOwnCreatedData(createAddress:any,cIndex:any){
   return nftCreatedCount;
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any){
+handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any,createAddress:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -319,7 +342,7 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
   }
   try{
     this.createdList.splice(cIndex,1,item);
-    this.hanleListCace(listType);
+    this.hanleListCace(listType,createAddress);
     this.isLoading = false;
   }catch(err){
    console.log("====err===="+JSON.stringify(err));
@@ -331,44 +354,50 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
 
 async getPurchased(){
   this.purchasedList = [];
-  this.feedService.setOwnPurchasedList(this.purchasedList);
   let createAddress = this.nftContractControllerService.getAccountAddress();
+  let allPurchasedList =this.feedService.getOwnPurchasedList();
+      allPurchasedList[createAddress] = [];
+  this.feedService.setOwnPurchasedList(allPurchasedList);
   let buyerInfo = await this.nftContractControllerService.getPasar().getBuyerByAddr(createAddress);
   console.log("BuyerInfo", buyerInfo);
   let buyerAddr = buyerInfo[1];
   let buyOrderCount = buyerInfo[2];
   if(buyOrderCount === '0'){
-    this.hanleListCace("buy");
+    this.hanleListCace("buy",createAddress);
     this.isLoading = false;
   }else{
     for(let index = 0;index<buyOrderCount;index++){
       this.purchasedList.push(null);
     }
-    this.handleBuyOrder(buyerAddr,buyOrderCount);
+    this.handleBuyOrder(buyerAddr,buyOrderCount,createAddress);
   }
 
 }
 
 async getOnSale(){
+  // let allOnSaleList = this.feedService.getOwnOnSaleList();
+  // let ownOnSaleList  = allOnSaleList[accountAddress] || [];
   this.onSaleList = [];
-  this.feedService.setOwnOnSaleList([]);
   let createAddress = this.nftContractControllerService.getAccountAddress();
+  let allOnSaleList = this.feedService.getOwnOnSaleList();
+  allOnSaleList[createAddress] = [];
+  this.feedService.setOwnOnSaleList(allOnSaleList);
   let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(createAddress);
   let sellerAddr = sellerInfo[1];
   let orderCount = sellerInfo[3];
   if(orderCount === '0'){
-    this.hanleListCace("sale");
+    this.hanleListCace("sale",createAddress);
     this.isLoading = false;
   }else{
     for(let index = 0;index<orderCount;index++){
       this.onSaleList.push(null);
     }
-   await this.handleOrder(sellerAddr,orderCount,"sale");
+   await this.handleOrder(sellerAddr,orderCount,"sale",createAddress);
   }
 
 }
 
-async handleOrder(sellerAddr:any,orderCount:any,listType:any){
+async handleOrder(sellerAddr:any,orderCount:any,listType:any,createAddress:any){
    for(let index=0;index<orderCount;index++){
     try {
       let sellerOrder =  await this.nftContractControllerService.getPasar().getSellerOpenByIndex(sellerAddr,index);
@@ -404,7 +433,7 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any){
            "sellerAddr":sellerAddr
        }
        this.onSaleList.splice(index,1,item);
-       this.hanleListCace(listType);
+       this.hanleListCace(listType,createAddress);
        this.isLoading = false;
        }).catch(()=>{
 
@@ -420,7 +449,7 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any){
    }
 }
 
-async handleBuyOrder(buyerAddr:any,orderCount:any){
+async handleBuyOrder(buyerAddr:any,orderCount:any,createAddress:any){
   for(let index=0;index<orderCount;index++){
     //try {
     let purchasedOrder =  await this.nftContractControllerService.getPasar().getBuyerOrderByIndex(buyerAddr,index);
@@ -456,7 +485,7 @@ async handleBuyOrder(buyerAddr:any,orderCount:any){
          "thumbnail":thumbnail
      }
       this.purchasedList.splice(index,1,item);
-       this.hanleListCace("buy");
+       this.hanleListCace("buy",createAddress);
        this.isLoading = false;
      }).catch(()=>{
 
@@ -503,10 +532,13 @@ handleCreated(asstItem:any){
 
 doRefresh(event:any){
   this.isLoading = true;
+  let createAddress = this.nftContractControllerService.getAccountAddress();
   switch(this.selectType){
     case "CollectionsPage.created":
       this.createdList = [];
-      this.feedService.setOwnCreatedList([]);
+      let allList = this.feedService.getOwnCreatedList();
+      allList[createAddress] = [];
+      this.feedService.setOwnCreatedList(allList);
       let cId =  setTimeout(() => {
            this.getNftCreated();
            event.target.complete();
@@ -515,7 +547,9 @@ doRefresh(event:any){
       break;
     case "CollectionsPage.purchased":
       this.purchasedList = [];
-      this.feedService.setOwnPurchasedList([]);
+      let allPurchasedList =this.feedService.getOwnPurchasedList();
+      allPurchasedList[createAddress] = [];
+      this.feedService.setOwnPurchasedList(allPurchasedList);
       let pId =  setTimeout(() => {
         this.getPurchased();
         event.target.complete();
@@ -524,8 +558,9 @@ doRefresh(event:any){
       break;
     case "CollectionsPage.onSale":
       this.onSaleList = [];
-      this.feedService.setOwnOnSaleList([]);
-      this.feedService.setOwnOnSaleList([]);
+      let allOnSaleList =this.feedService.getOwnOnSaleList();
+      allOnSaleList[createAddress] = [];
+      this.feedService.setOwnOnSaleList(allOnSaleList);
       let oId =  setTimeout(() => {
         this.getOnSale();
         event.target.complete();
@@ -535,21 +570,27 @@ doRefresh(event:any){
   }
 }
 
-hanleListCace(listType:string){
+hanleListCace(listType:string,createAddress?:any){
   console.log("====listType===="+listType);
   switch(listType){
    case "created":
      console.log("====this.createdList===="+this.createdList.length);
-      this.feedService.setOwnCreatedList(this.createdList);
-      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(this.createdList));
+      let allList = this.feedService.getOwnCreatedList();
+          allList[createAddress] = this.createdList;
+      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allList));
       break;
    case "buy":
-      this.feedService.setOwnPurchasedList(this.purchasedList);
-      this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(this.purchasedList));
+      let allPurchasedList = this.feedService.getOwnPurchasedList();
+          allPurchasedList[createAddress] = this.purchasedList;
+      this.feedService.setOwnPurchasedList(allPurchasedList);
+      this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
       break;
    case "sale":
-      this.feedService.setOwnOnSaleList(this.onSaleList);
-      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(this.onSaleList));
+    let allOnSaleList = this.feedService.getOwnOnSaleList();
+     allOnSaleList[createAddress] = this.onSaleList;
+      this.feedService.setOwnOnSaleList(allOnSaleList);
+      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
       break;
   }
 }

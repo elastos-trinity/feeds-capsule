@@ -247,6 +247,13 @@ export class MintnftPage implements OnInit {
   }
 
   checkParms(){
+
+    let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+    if(accountAddress === ""){
+      this.native.toast_trans("common.connectWallet");
+      return;
+    }
+
     if(this.thumbnail === ""){
       this.native.toastWarn("MintnftPage.nftAssetPlaceholder");
       return false;
@@ -314,7 +321,6 @@ export class MintnftPage implements OnInit {
     result = result || "";
     if(result=== ""){
       this.native.hideLoading();
-      alert("nft创建失败");
       this.native.toast_trans("common.nftCreationFailed")
     return;
     }
@@ -340,7 +346,7 @@ export class MintnftPage implements OnInit {
     result = result || "";
     if(result===""){
       this.native.hideLoading();
-      alert("public pasar失败");
+      this.native.toast_trans("common.publicPasarFailed");
       return;
     }
 
@@ -360,15 +366,17 @@ export class MintnftPage implements OnInit {
     if(orderIndex == -1){
       console.log("----222222-------");
       this.native.hideLoading();
-      alert("public pasar失败");
+      this.native.toast_trans("common.publicPasarFailed");
       return;
     }
    //console.log("======receipt======"+JSON.stringify(receipt))
-
+   let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+   let createTime = tokenInfo[7];
     let order = await this.nftContractControllerService.getPasar().getSellerOrderByIndex(accountAddress, orderIndex);
     console.log("======order======", order);
 
-    this.orderId = tokenId = order[3];
+    this.orderId = order[0];
+    tokenId = order[3];
     let sellerAddr = order[7] || "";
     let saleOrderId = order[0];
     let item = {
@@ -383,7 +391,8 @@ export class MintnftPage implements OnInit {
       "royalties":this.nftRoyalties,
       "quantity":this.nftQuantity,
       "thumbnail":this.imageObj["thumbnail"],
-      "sellerAddr":sellerAddr
+      "sellerAddr":sellerAddr,
+      "createTime":createTime*1000
     }
 
     let list = this.feedService.getPasarList();
@@ -391,14 +400,15 @@ export class MintnftPage implements OnInit {
     this.feedService.setPasarList(list);
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
 
-    let slist = this.feedService.getOwnOnSaleList();
+    let accAddress = this.nftContractControllerService.getAccountAddress();
+    let allOnSaleList = this.feedService.getOwnOnSaleList();
+    let slist = allOnSaleList[accAddress] || [];
         slist.push(item);
-    this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(slist));
+    this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
 
     await this.getSetChannel(tokenId);
     this.native.hideLoading();
     this.native.pop();
-    this.native.toast("public pasar sucess");
   }
 
 

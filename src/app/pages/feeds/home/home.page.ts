@@ -211,6 +211,9 @@ export class HomePage implements OnInit {
         this.isAndroid = false;
     }
     this.pasarList = this.feedService.getPasarList();
+    this.pasarList = _.sortBy(this.pasarList,(item:any)=> {
+      return - Number(item.createTime);
+    });
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
@@ -283,6 +286,9 @@ export class HomePage implements OnInit {
  this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
       if(this.tabType === "pasar"){
         this.pasarList = this.feedService.getPasarList();
+        this.pasarList = _.sortBy(this.pasarList,(item:any)=> {
+          return - Number(item.createTime);
+        });
       }
       this.addCommonEvents();
       this.addBinaryEvevnt();
@@ -310,17 +316,19 @@ addCommonEvents(){
     if(sellerAddr === createAddr){
       //add created
       assetItem["fixedAmount"] = "";
-      let clist = this.feedService.getOwnCreatedList();
+      let allCreatedList = this.feedService.getOwnCreatedList();
+      let clist = allCreatedList[createAddr] || [];
           clist.push(assetItem)
-      this.feedService.setOwnCreatedList(clist);
-      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(clist));
+      this.feedService.setOwnCreatedList(allCreatedList);
+      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
 
-      let oList = this.feedService.getOwnOnSaleList();
+      let allOnSaleList = this.feedService.getOwnOnSaleList();
+      let oList = allOnSaleList[createAddr] || [];
       oList =  _.filter(oList,(item)=>{
         return item.saleOrderId!=saleOrderId; }
       );
-      this.feedService.setOwnOnSaleList(oList);
-      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(oList));
+      this.feedService.setOwnOnSaleList(allOnSaleList);
+      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
     }
 
 
@@ -1529,6 +1537,9 @@ clearData(){
         return;
       }
       this.pasarList = plist;
+      this.pasarList = _.sortBy(this.pasarList,(item:any)=> {
+        return - Number(item.createTime);
+      });
      break;
     }
   }
@@ -1674,7 +1685,10 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "createTime":createTime*1000,
   }
   try{
-    this.pasarList.splice(pIndex,1,item);
+     this.pasarList.splice(pIndex,1,item);
+     this.pasarList = _.sortBy(this.pasarList,(item:any)=> {
+      return - Number(item.createTime);
+    });
     this.feedService.setPasarList(this.pasarList);
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
   }catch(err){
