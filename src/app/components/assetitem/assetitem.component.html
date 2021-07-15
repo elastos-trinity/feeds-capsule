@@ -3,7 +3,7 @@
     <img src="assets/images/loading.png" style="height:210px;object-fit:cover;"/>
   </div>
   <div *ngIf="assetItem != null ">
-    <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:cover;"/>
+    <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:contain;"/>
     <div class="des" (click)="clickItem()">{{assetItem['name']}}</div>
     <div class="des1" (click)="clickItem()">{{assetItem['description']}}</div>
     <div class="des2" (click)="clickItem()">{{"MintnftPage.nftQuantity"|translate}}: {{assetItem['quantity']}}</div>
