@@ -3,6 +3,7 @@ import { HttpClient,HttpHeaders} from '@angular/common/http';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController} from '@ionic/angular';
+
 @Injectable()
 export class HttpService{
   public httpOptions = {
@@ -74,11 +75,7 @@ export class HttpService{
     })
   }
 
-  ajaxNftPost(url:string, json:Object,isLoading:boolean=true) {
-    if(isLoading){
-      this.native.showLoading("common.waitMoment",(isDismiss)=>{
-      },60000);
-    }
+  ajaxNftPost(url:string, json:Object) {
     return new Promise((resove, reject) => {
       this.httpClient.post(url,json).subscribe((response) => {
         if(response["code"] === 400){
@@ -89,10 +86,7 @@ export class HttpService{
         resove(response);
       }, (error) => {
         let sid = setTimeout(()=>{
-          if(isLoading){
-          this.native.hideLoading();
-          }
-          this.openAlert();
+          reject(error);
           clearTimeout(sid);
         },500);
         reject(error);

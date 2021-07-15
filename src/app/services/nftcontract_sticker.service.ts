@@ -78,7 +78,7 @@ export class NFTContractStickerService {
       return await this.stickerContract.methods.tokenInfo(tokenId).call();
     }
 
-    async mint(tokenId, supply, uri, royalty): Promise<any>{
+    async mint(tokenId: string, supply: string, uri: string, royalty: string): Promise<any>{
       return new Promise(async (resolve, reject) => {
         console.log("Mint params ",tokenId,supply,uri,royalty);
         const mintdata = this.stickerContract.methods.mint(tokenId,supply,uri,royalty).encodeABI();
@@ -186,5 +186,11 @@ export class NFTContractStickerService {
           this.checkApprovedInterval = null;
         }
       }, 5000);
+    }
+
+    cancelSetApprovedProcess(){
+      if (!this.checkApprovedInterval)
+        return ;
+      clearInterval(this.checkApprovedInterval);
     }
 }

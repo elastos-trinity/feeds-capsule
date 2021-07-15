@@ -204,7 +204,7 @@ export class NftdialogComponent implements OnInit {
       console.log("=====this.quantity======"+typeof(this.quantity));
       let orderIndex = -1;
       try{
-        orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.quantity,salePrice);
+        orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(tokenId,this.quantity,salePrice);
       }catch(error){
       }
        

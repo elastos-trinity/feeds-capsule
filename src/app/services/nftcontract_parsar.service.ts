@@ -99,10 +99,11 @@ export class NFTContractParsarService {
       return await this.pasarContract.methods.getSellerOpenByIndex(address,index).call();
     }
 
-    async getSellerOrderByIndex(sellerAddress, index){
+    async getSellerOrderByIndex(index){
       if(!this.pasarContract)
         return [];
-      return await this.pasarContract.methods.getSellerOrderByIndex(sellerAddress, index).call();
+      let accountAddress = this.walletConnectControllerService.getAccountAddress();
+      return await this.pasarContract.methods.getSellerOrderByIndex(accountAddress, index).call();
     }
 
     async getBuyerOrderByIndex(address, index){
@@ -111,9 +112,10 @@ export class NFTContractParsarService {
       return await this.pasarContract.methods.getBuyerOrderByIndex(address,index).call();
     }
 
-    createOrderForSale(accountAddress, tokenId, quantity, price): Promise<number>{
+    createOrderForSale(tokenId, quantity, price): Promise<number>{
       return new Promise(async (resolve, reject) => {
         console.log("CreateOrderForSale params",tokenId,quantity,price);
+        let accountAddress = this.walletConnectControllerService.getAccountAddress();
         let seller = await this.getSellerByAddr(accountAddress);
         let lastOrderIndex = seller[2] - 1 ;
 
@@ -194,7 +196,7 @@ export class NFTContractParsarService {
         console.log("Seller info ", seller);
 
         let lastOrderIndex = seller[2] - 1 ;
-        let originOrder = await this.getSellerOrderByIndex(accountAddress,lastOrderIndex);
+        let originOrder = await this.getSellerOrderByIndex(lastOrderIndex);
 
         console.log("Origin order is ", originOrder);
 
@@ -226,17 +228,17 @@ export class NFTContractParsarService {
                 console.error("ChangeOrderPrice, error is", error, receipt);
               });
 
-        this.checkPrice(accountAddress, lastOrderIndex, oldPrice, (newPrice)=>{
+        this.checkPrice(lastOrderIndex, oldPrice, (newPrice)=>{
           resolve(SUCCESS);
         });
       });
     }
 
-    checkPrice(accountAddress, lastOrderIndex, price, callback: (newPrice: number)=>void){
+    checkPrice(lastOrderIndex, price, callback: (newPrice: number)=>void){
       this.checkPriceInterval = setInterval(async () => {
         if (!this.checkPriceInterval)
           return ;
-        let newOrder = await this.getSellerOrderByIndex(accountAddress,lastOrderIndex);
+        let newOrder = await this.getSellerOrderByIndex(lastOrderIndex);
         console.log("CheckPrice , neworder info is", newOrder);
         let newPrice = newOrder[5];
         console.log("New price is", newPrice);

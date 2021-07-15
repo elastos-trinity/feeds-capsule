@@ -15,6 +15,8 @@ import { FeedService } from '../../../services/FeedService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 
+const SUCCESS = "success";
+const SKIP = "SKIP";
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -167,7 +169,7 @@ export class MintnftPage implements OnInit {
     let thumbnailBlob  = this.dataURLtoBlob(thumbnailBase64);
     let formData = new FormData();
     formData.append("",thumbnailBlob);
-    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData,false).then((result)=>{
+    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
       let hash = result["Hash"] || null;
       if(hash != null){
         this.native.hideLoading();
@@ -181,33 +183,63 @@ export class MintnftPage implements OnInit {
   }
 
   sendIpfsJSON(){
-   let ipfsJSON = {
-      "version":"1",
-      "type": "image",
-      "name":this.nftName,
-      "description":this.nftDescription,
-      "image":this.imageObj['imgHash'],
-      "kind":this.imageObj['imgFormat'],
-      "size":this.imageObj["imgSize"],
-      "thumbnail":this.imageObj["thumbnail"]
-   }
-
-   let formData = new FormData();
-   formData.append("",JSON.stringify(ipfsJSON));
-
-   this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
-    //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
-    console.log("====json Data====="+JSON.stringify(result));
-    let hash = result["Hash"] || null;
-    if(hash != null){
-       let tokenId = "0x"+UtilService.SHA256(hash);
-       let jsonHash = "feeds:json:"+hash;
-       this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties);
+    let ipfsJSON = {
+        "version":"1",
+        "type": "image",
+        "name":this.nftName,
+        "description":this.nftDescription,
+        "image":this.imageObj['imgHash'],
+        "kind":this.imageObj['imgFormat'],
+        "size":this.imageObj["imgSize"],
+        "thumbnail":this.imageObj["thumbnail"]
     }
-}).catch((err)=>{
-     console.log("========"+JSON.stringify(err));
-});
 
+    let formData = new FormData();
+    formData.append("",JSON.stringify(ipfsJSON));
+
+    //Start send ipfs data loading and 
+    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      if(isDismiss){
+        alert("common.publicPasarFailed");
+      }
+    },3*60000);
+  
+    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
+      //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+      console.log("====json Data====="+JSON.stringify(result));
+      let hash = result["Hash"] || null;
+      if(hash != null){
+        let tokenId = "0x"+UtilService.SHA256(hash);
+        let jsonHash = "feeds:json:"+hash;
+        
+        this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties).then((mintResult)=>{
+          if(mintResult!=""&&this.curPublishtoPasar)
+            return this.handleSetApproval();
+          return SKIP;
+        }).then((setApprovalResult)=>{
+          if (setApprovalResult == SKIP)
+            return -1;
+          return this.handleCreateOrder(tokenId);
+        }).then((orderIndex)=>{
+          if (orderIndex == -1)
+            return SKIP;
+          return this.handleOrderResult(tokenId, orderIndex);
+        }).then(()=>{
+          //Finish
+          this.native.hideLoading();
+          this.native.pop();
+        }).catch((error)=>{
+          this.nftContractControllerService.getSticker().cancelMintProcess();
+          this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
+          this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
+          
+          this.native.hideLoading();
+          this.native.toast_trans("common.publicPasarFailed");
+        });
+      }
+      }).catch((err)=>{
+          console.log("========"+JSON.stringify(err));
+      });
   }
 
   dataURLtoBlob(dataurl:string) {
@@ -311,157 +343,164 @@ export class MintnftPage implements OnInit {
     return pathObj;
   }
 
-  async mintContract(tokenId:any,uri:any,supply:any,royalty:any){
-    let result = "";
-    try{
-      result = await this.nftContractControllerService.getSticker().mint(tokenId, supply, uri, royalty);
-    }catch(error){
-    }
+  mintContract(tokenId: string,uri: string, supply: string, royalty: string): Promise<string>{
+    return new Promise(async (resolve, reject) => {
+      const MINT_ERROR = "Mint process error";
+      let result = "";
+      try{
+        result = await this.nftContractControllerService.getSticker().mint(tokenId, supply, uri, royalty);
+      }catch(error){
+        reject(MINT_ERROR);
+        return;
+      }
 
-    result = result || "";
-    if(result=== ""){
-      this.native.hideLoading();
-      this.native.toast_trans("common.nftCreationFailed")
-    return;
-    }
-    if(result!=""&&this.curPublishtoPasar){
-      this.handlePasar(tokenId);
-      return;
-    }
-    this.native.hideLoading();
-    this.native.pop();
-    this.native.toast("sucess");
+      result = result || "";
+      if(result === ""){
+        reject(MINT_ERROR);
+        return;
+      }
+      
+      resolve(SUCCESS);
+    });
   }
 
- async handlePasar(tokenId:any){
-    // Seller approve pasar
-    let pasarAddress = this.nftContractControllerService.getPasar().getAddress();
-    let result = "";
-    let accountAddress = this.nftContractControllerService.getAccountAddress();
-    try{
-      result = await this.nftContractControllerService.getSticker().setApprovalForAll(accountAddress, pasarAddress, true);
-    }catch(error){
-    }
+  async handleSetApproval(): Promise<string>{
+    return new Promise(async (resolve, reject) => {
+      const SETAPPROVAL_ERROR = "Set approval error ";
+      let pasarAddress = this.nftContractControllerService.getPasar().getAddress();
+      let result = "";
+      let accountAddress = this.nftContractControllerService.getAccountAddress();
+      try{
+        result = await this.nftContractControllerService.getSticker().setApprovalForAll(accountAddress, pasarAddress, true);
+      }catch(error){
+        reject(SETAPPROVAL_ERROR);
+        return;
+      }
 
-    result = result || "";
-    if(result===""){
-      this.native.hideLoading();
-      this.native.toast_trans("common.publicPasarFailed");
-      return;
-    }
+      result = result || "";
+      if(result === ""){
+        reject(SETAPPROVAL_ERROR);
+        return;
+      }
 
-    let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
-    console.log("=======price======="+price);
-    let salePrice = this.nftContractControllerService.transToWei(price.toString()).toString();
-    console.log("=======salePrice======="+salePrice);
-    let orderIndex = -1;
-    try{
-      orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.nftQuantity,salePrice);
-    }catch(error){
-    }
-    console.log("-----------");
-    orderIndex = orderIndex || -1;
-    console.log("----1111111111-------");
-    console.log("----createOrderresult-------", orderIndex);
-    if(orderIndex == -1){
-      console.log("----222222-------");
-      this.native.hideLoading();
-      this.native.toast_trans("common.publicPasarFailed");
-      return;
-    }
-   //console.log("======receipt======"+JSON.stringify(receipt))
-   let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
-   let createTime = tokenInfo[7];
-    let order = await this.nftContractControllerService.getPasar().getSellerOrderByIndex(accountAddress, orderIndex);
-    console.log("======order======", order);
+      resolve(SUCCESS);
+    });
+  }
 
-    this.orderId = order[0];
-    tokenId = order[3];
-    let sellerAddr = order[7] || "";
-    let saleOrderId = order[0];
-    let item = {
-      "saleOrderId":saleOrderId,
-      "tokenId":tokenId,
-      "asset":this.imageObj["imgHash"],
-      "name":this.nftName,
-      "description":this.nftDescription,
-      "fixedAmount":order[5],
-      "kind":this.imageObj['imgFormat'],
-      "type":this.issueRadionType,
-      "royalties":this.nftRoyalties,
-      "quantity":this.nftQuantity,
-      "thumbnail":this.imageObj["thumbnail"],
-      "sellerAddr":sellerAddr,
-      "createTime":createTime*1000
-    }
+  async handleCreateOrder(tokenId:any): Promise<number>{
+    return new Promise(async (resolve, reject) => {
+      let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
+      let salePrice = this.nftContractControllerService.transToWei(price.toString()).toString();
+      let orderIndex = -1;
+      try{
+        orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(tokenId,this.nftQuantity,salePrice);
+      }catch(error){
+        reject(orderIndex);
+      }
+      orderIndex = orderIndex || -1;
+      if(orderIndex == -1){
+        reject(orderIndex);
+        return;
+      }
 
-    let list = this.feedService.getPasarList();
-        list.push(item)
-    this.feedService.setPasarList(list);
-    this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
+      resolve(orderIndex);
+    });
+  }
 
-    let accAddress = this.nftContractControllerService.getAccountAddress();
-    let allOnSaleList = this.feedService.getOwnOnSaleList();
-    let slist = allOnSaleList[accAddress] || [];
-        slist.push(item);
-    this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
+  async handleOrderResult(tokenId: string, orderIndex: number): Promise<string>{
+    return new Promise(async (resolve, reject) => {
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+      let createTime = tokenInfo[7];
+        let order = await this.nftContractControllerService.getPasar().getSellerOrderByIndex(orderIndex);
+        console.log("======order======", order);
 
-    await this.getSetChannel(tokenId);
-    this.native.hideLoading();
-    this.native.pop();
+        this.orderId = order[0];
+        // tokenId = order[3];
+        let sellerAddr = order[7] || "";
+        let saleOrderId = order[0];
+        let item = {
+          "saleOrderId":saleOrderId,
+          "tokenId":tokenId,
+          "asset":this.imageObj["imgHash"],
+          "name":this.nftName,
+          "description":this.nftDescription,
+          "fixedAmount":order[5],
+          "kind":this.imageObj['imgFormat'],
+          "type":this.issueRadionType,
+          "royalties":this.nftRoyalties,
+          "quantity":this.nftQuantity,
+          "thumbnail":this.imageObj["thumbnail"],
+          "sellerAddr":sellerAddr,
+          "createTime":createTime*1000
+        }
+
+        let list = this.feedService.getPasarList();
+            list.push(item)
+        this.feedService.setPasarList(list);
+        this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
+
+        let accAddress = this.nftContractControllerService.getAccountAddress();
+        let allOnSaleList = this.feedService.getOwnOnSaleList();
+        let slist = allOnSaleList[accAddress] || [];
+            slist.push(item);
+        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
+
+        await this.getSetChannel(tokenId);
+        
+        resolve(SUCCESS);
+      });
   }
 
 
   // 压缩图片
-compressImage(path:any):Promise<string>{
-  //最大高度
-  const maxHeight = 600;
-  //最大宽度
-  const maxWidth = 600;
-  return new Promise((resolve, reject) => {
-      let img = new Image();
-      img.src = path;
+  compressImage(path:any):Promise<string>{
+    //最大高度
+    const maxHeight = 600;
+    //最大宽度
+    const maxWidth = 600;
+    return new Promise((resolve, reject) => {
+        let img = new Image();
+        img.src = path;
 
-      img.onload = ()=> {
-        const originHeight = img.height;
-        const originWidth = img.width;
-        let compressedWidth = img.height;
-        let compressedHeight = img.width;
-        if ((originWidth > maxWidth) && (originHeight > maxHeight)) {
-          // 更宽更高，
-          if ((originHeight / originWidth) > (maxHeight / maxWidth)) {
-            // 更加严重的高窄型，确定最大高，压缩宽度
+        img.onload = ()=> {
+          const originHeight = img.height;
+          const originWidth = img.width;
+          let compressedWidth = img.height;
+          let compressedHeight = img.width;
+          if ((originWidth > maxWidth) && (originHeight > maxHeight)) {
+            // 更宽更高，
+            if ((originHeight / originWidth) > (maxHeight / maxWidth)) {
+              // 更加严重的高窄型，确定最大高，压缩宽度
+              compressedHeight = maxHeight
+              compressedWidth = maxHeight * (originWidth / originHeight)
+            } else {
+              //更加严重的矮宽型, 确定最大宽，压缩高度
+              compressedWidth = maxWidth
+              compressedHeight = maxWidth * (originHeight / originWidth)
+            }
+          } else if (originWidth > maxWidth && originHeight <= maxHeight) {
+            // 更宽，但比较矮，以maxWidth作为基准
+            compressedWidth = maxWidth
+            compressedHeight = maxWidth * (originHeight / originWidth)
+          } else if (originWidth <= maxWidth && originHeight > maxHeight) {
+            // 比较窄，但很高，取maxHight为基准
             compressedHeight = maxHeight
             compressedWidth = maxHeight * (originWidth / originHeight)
           } else {
-            //更加严重的矮宽型, 确定最大宽，压缩高度
-            compressedWidth = maxWidth
-            compressedHeight = maxWidth * (originHeight / originWidth)
+            // 符合宽高限制，不做压缩
           }
-        } else if (originWidth > maxWidth && originHeight <= maxHeight) {
-          // 更宽，但比较矮，以maxWidth作为基准
-          compressedWidth = maxWidth
-          compressedHeight = maxWidth * (originHeight / originWidth)
-        } else if (originWidth <= maxWidth && originHeight > maxHeight) {
-          // 比较窄，但很高，取maxHight为基准
-          compressedHeight = maxHeight
-          compressedWidth = maxHeight * (originWidth / originHeight)
-        } else {
-          // 符合宽高限制，不做压缩
+          // 生成canvas
+          let canvas = document.createElement('canvas');
+          let context = canvas.getContext('2d');
+          canvas.height = compressedHeight;
+          canvas.width = compressedWidth;
+          // context.globalAlpha = 0.2;
+          context.clearRect(0, 0, compressedWidth, compressedHeight);
+          context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
+          let base64 = canvas.toDataURL('image/*',0.7);
+          resolve(base64);
         }
-        // 生成canvas
-        let canvas = document.createElement('canvas');
-        let context = canvas.getContext('2d');
-        canvas.height = compressedHeight;
-        canvas.width = compressedWidth;
-        // context.globalAlpha = 0.2;
-        context.clearRect(0, 0, compressedWidth, compressedHeight);
-        context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
-        let base64 = canvas.toDataURL('image/*',0.7);
-        resolve(base64);
-      }
-
-    });
+      });
   }
 
  async getSetChannel(tokenId:any){
