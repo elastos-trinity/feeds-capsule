@@ -17,8 +17,7 @@
 		"type": "bool"
 	}],
 	"name": "ApprovalForAll",
-	"type": "event",
-	"signature": "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31"
+	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
@@ -33,8 +32,7 @@
 		"type": "uint256"
 	}],
 	"name": "RoyaltyFee",
-	"type": "event",
-	"signature": "0x0734881e3d94eb614a5c9e5287c714d2e8c65dd8ad42e5c9c1c106346174435f"
+	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
@@ -49,8 +47,7 @@
 		"type": "uint256"
 	}],
 	"name": "RoyaltyOwner",
-	"type": "event",
-	"signature": "0xe0537833e38b819e5000b35dd5111a5a5e07c8d77939d860e6e25eb1210e64f2"
+	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
@@ -80,8 +77,7 @@
 		"type": "uint256[]"
 	}],
 	"name": "TransferBatch",
-	"type": "event",
-	"signature": "0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb"
+	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
@@ -111,8 +107,7 @@
 		"type": "uint256"
 	}],
 	"name": "TransferSingle",
-	"type": "event",
-	"signature": "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62"
+	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
@@ -127,8 +122,7 @@
 		"type": "uint256"
 	}],
 	"name": "URI",
-	"type": "event",
-	"signature": "0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b"
+	"type": "event"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -146,9 +140,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x00fdd58e"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address[]",
@@ -166,9 +158,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x4e1273f4"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -182,8 +172,7 @@
 	"name": "burn",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xb390c0ab"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -201,8 +190,7 @@
 	"name": "burnFrom",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0x124d91e5"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "decimals",
@@ -212,9 +200,7 @@
 		"type": "uint8"
 	}],
 	"stateMutability": "pure",
-	"type": "function",
-	"constant": true,
-	"signature": "0x313ce567"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "getCodeAddress",
@@ -224,16 +210,13 @@
 		"type": "address"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x50d75d25"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "initialize",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0x8129fc1c"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "initialized",
@@ -243,9 +226,7 @@
 		"type": "bool"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x158ef93e"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -263,9 +244,7 @@
 		"type": "bool"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0xe985e9c5"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -287,8 +266,7 @@
 	"name": "mint",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xcf2ed32e"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "name",
@@ -298,9 +276,7 @@
 		"type": "string"
 	}],
 	"stateMutability": "pure",
-	"type": "function",
-	"constant": true,
-	"signature": "0x06fdde03"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "owner",
@@ -310,9 +286,7 @@
 		"type": "address"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x8da5cb5b"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -338,8 +312,7 @@
 	"name": "safeBatchTransferFrom",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0x2eb2c2d6"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -361,8 +334,7 @@
 	"name": "safeBatchTransferFrom",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xfba0ee64"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -384,8 +356,7 @@
 	"name": "safeTransferFrom",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0x0febdd49"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -411,8 +382,7 @@
 	"name": "safeTransferFrom",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xf242432a"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -426,8 +396,7 @@
 	"name": "setApprovalForAll",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xa22cb465"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "bytes4",
@@ -441,9 +410,7 @@
 		"type": "bool"
 	}],
 	"stateMutability": "pure",
-	"type": "function",
-	"constant": true,
-	"signature": "0x01ffc9a7"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "symbol",
@@ -453,9 +420,7 @@
 		"type": "string"
 	}],
 	"stateMutability": "pure",
-	"type": "function",
-	"constant": true,
-	"signature": "0x95d89b41"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -469,9 +434,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x68e586e8"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address[]",
@@ -485,9 +448,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x6c433957"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -501,9 +462,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0xeacde2cb"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -517,9 +476,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x1e76056c"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -537,9 +494,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x3bb6f9c0"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -557,9 +512,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0xc33ddc7d"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -592,15 +545,21 @@
 			"internalType": "uint256",
 			"name": "royaltyFee",
 			"type": "uint256"
+		}, {
+			"internalType": "uint256",
+			"name": "createTime",
+			"type": "uint256"
+		}, {
+			"internalType": "uint256",
+			"name": "updateTime",
+			"type": "uint256"
 		}],
 		"internalType": "struct ITokenInfo.TokenInfo",
 		"name": "",
 		"type": "tuple"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0xcc33c875"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -633,15 +592,21 @@
 			"internalType": "uint256",
 			"name": "royaltyFee",
 			"type": "uint256"
+		}, {
+			"internalType": "uint256",
+			"name": "createTime",
+			"type": "uint256"
+		}, {
+			"internalType": "uint256",
+			"name": "updateTime",
+			"type": "uint256"
 		}],
 		"internalType": "struct ITokenInfo.TokenInfo[]",
 		"name": "",
 		"type": "tuple[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x49395bf1"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -655,9 +620,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x14625f9b"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -671,9 +634,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0xea0f849f"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -687,9 +648,7 @@
 		"type": "address"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x7d447f43"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -703,9 +662,7 @@
 		"type": "address[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x15de1171"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -719,9 +676,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x2693ebf2"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -735,9 +690,7 @@
 		"type": "uint256[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x8457369a"
+	"type": "function"
 }, {
 	"inputs": [],
 	"name": "totalSupply",
@@ -747,9 +700,7 @@
 		"type": "uint256"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x18160ddd"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -759,8 +710,7 @@
 	"name": "transferOwnership",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0xf2fde38b"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
@@ -770,8 +720,7 @@
 	"name": "updateCodeAddress",
 	"outputs": [],
 	"stateMutability": "nonpayable",
-	"type": "function",
-	"signature": "0x912a9885"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
@@ -785,9 +734,7 @@
 		"type": "string"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x0e89341c"
+	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256[]",
@@ -801,7 +748,5 @@
 		"type": "string[]"
 	}],
 	"stateMutability": "view",
-	"type": "function",
-	"constant": true,
-	"signature": "0x96d7e229"
+	"type": "function"
 }]

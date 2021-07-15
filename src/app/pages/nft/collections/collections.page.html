@@ -26,7 +26,7 @@
      </div>
      <!---Created-->
      <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length===0&&!isLoading">
-       <ion-col size="6" *ngIf="isMine===0">
+       <ion-col size="6">
         <app-addasset
         (addAsset)="addAsset()"
         ></app-addasset>

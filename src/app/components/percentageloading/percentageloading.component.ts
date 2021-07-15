@@ -10,7 +10,7 @@ export class PercentageloadingComponent implements OnInit {
   public max:number = 100;
   public stroke: number = 4;
   public radius: number = 25;
-  public color: string = '#45ccce';
+  public color: string = '#7624fe';
   public background: string = '#eaeaea';
   public clockwise: boolean = true;
   public duration: number = 800;

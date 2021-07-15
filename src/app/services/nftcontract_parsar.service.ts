@@ -9,7 +9,7 @@ const FAIL = "";
 @Injectable()
 export class NFTContractParsarService {
     private pasarAbi = require("../../assets/contracts/pasarABI.json");
-    private pasarAddr:string = "0xBF362056dE83F2449180929a736a8cD02367b7c2";
+    private pasarAddr:string = "0xe0D47d8e4044C7ec29182dC9B3Be6bDa8e0d0536";
     private pasarContract: any;
     private web3: Web3;
     private checkSellerOrderStateInterval: NodeJS.Timer;
@@ -115,7 +115,7 @@ export class NFTContractParsarService {
 
         const orderdata = this.pasarContract.methods.createOrderForSale(tokenId,quantity,price).encodeABI();
         let transactionParams = await this.createTxParams(orderdata, 0);
-    
+
         console.log("Calling createOrderForSale smart contract through wallet connect", orderdata, transactionParams);
 
 
@@ -162,7 +162,7 @@ export class NFTContractParsarService {
         console.log("lastOrderIndex is", lastOrderIndex);
         console.log("newIndex is", newIndex);
 
-        
+
         if ( newIndex != lastOrderIndex){
           console.log("newIndex is diffrent");
           clearInterval(this.checkSellerOrderStateInterval);
@@ -196,10 +196,10 @@ export class NFTContractParsarService {
 
         let oldPrice = originOrder[5];
         console.log("Old price is", oldPrice);
-        
+
         const orderdata = this.pasarContract.methods.changeOrderPrice(orderId,price).encodeABI();
         let transactionParams = await this.createTxParams(orderdata, 0);
-    
+
         console.log("Calling changeOrderPrice smart contract through wallet connect", orderdata, transactionParams);
 
         this.pasarContract.methods.changeOrderPrice(orderId,price)
@@ -249,7 +249,7 @@ export class NFTContractParsarService {
         return
       clearInterval(this.checkPriceInterval);
     }
-    
+
     buyOrder(accountAddress, orderId, price): Promise<string>{
       return new Promise(async (resolve, reject) => {
         console.log("BuyOrder params",orderId);
@@ -260,7 +260,7 @@ export class NFTContractParsarService {
 
         const orderdata = this.pasarContract.methods.buyOrder(orderId).encodeABI();
         let transactionParams = await this.createTxParams(orderdata, price);
-    
+
         console.log("Calling buyOrder smart contract through wallet connect", orderdata, transactionParams);
 
         this.pasarContract.methods.buyOrder(orderId)
@@ -318,7 +318,7 @@ export class NFTContractParsarService {
 
         const orderdata = this.pasarContract.methods.cancelOrder(orderId).encodeABI();
         let transactionParams = await this.createTxParams(orderdata, 0);
-    
+
         console.log("Calling cancelOrder smart contract through wallet connect", orderdata, transactionParams);
 
         let order = await this.getOrderById(orderId);
@@ -363,7 +363,7 @@ export class NFTContractParsarService {
         let newOrderState = order[2];
         console.log("CheckOrderState order info is", order);
 
-        
+
         if ( newOrderState != originOrderState){
           console.log("newIndex is diffrent");
           clearInterval(this.checkOrderStateInterval);
@@ -408,7 +408,7 @@ export class NFTContractParsarService {
       }catch(error){
         console.log("error", error);
       }
-      
+
       console.log("===gas ===",gas);
       let gasPrice = await this.web3.eth.getGasPrice();
       return {

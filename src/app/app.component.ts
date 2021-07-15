@@ -382,6 +382,7 @@ export class MyApp {
 
   initNftOwnCreatedList(){
     this.feedService.getData("feed.nft.own.created.list").then((nftOwnCreatedList)=>{
+      console.log("=======nftOwnCreatedList======"+nftOwnCreatedList);
       if(nftOwnCreatedList === null){
         this.feedService.setOwnCreatedList([]);
         return;

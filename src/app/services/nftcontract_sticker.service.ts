@@ -4,7 +4,7 @@ import Web3 from 'web3';
 
 @Injectable()
 export class NFTContractStickerService {
-    private stickerAddress:string = "0x6F2477C1439676337b02D51C3b0c327942751C9d";
+    private stickerAddress:string = "0xF85153d9Dc43602d5f71b572eD7bffEC00060A2f";
     private stickerAbi = require("../../assets/contracts/stickerABI.json");
     private web3: Web3;
     private stickerContract: any;
@@ -29,7 +29,7 @@ export class NFTContractStickerService {
     getStickerAddress(){
       return this.stickerAddress;
     }
-    
+
     setApprovalForAll(accountAddress: string, contractAddress: string, approved: boolean): Promise<any>{
       return new Promise(async (resolve, reject) => {
         let isApproved = await this.isApprovedForAll(accountAddress, contractAddress);
@@ -44,22 +44,22 @@ export class NFTContractStickerService {
         console.log("Calling setApprovalForAll smart contract through wallet connect", data, transactionParams);
         this.stickerContract.methods.setApprovalForAll(contractAddress, approved).send(transactionParams)
             .on('transactionHash', (hash) => {
-              
+
               console.log("transactionHash", hash);
               resolve(hash);
             })
             .on('receipt', (receipt) => {
-              
+
               console.log("receipt", receipt);
               resolve(receipt);
             })
             .on('confirmation', (confirmationNumber, receipt) => {
-              
+
               console.log("confirmation", confirmationNumber, receipt);
               resolve(receipt);
             })
             .on('error', (error, receipt) => {
-              
+
               console.error("mint error===");
               console.error("error", error);
               reject(receipt);
@@ -110,7 +110,7 @@ export class NFTContractStickerService {
         });
       });
     }
-    
+
     async tokenIdOfOwnerByIndex(address, index){
       return await this.stickerContract.methods.tokenIdOfOwnerByIndex(address,index).call();
     }
@@ -137,7 +137,7 @@ export class NFTContractStickerService {
       }catch(error){
         console.log("error", error);
       }
-      
+
       let gasPrice = await this.web3.eth.getGasPrice();
       return {
         from: accountAddress,

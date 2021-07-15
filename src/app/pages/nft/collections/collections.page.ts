@@ -258,17 +258,23 @@ export class CollectionsPage implements OnInit {
   }
 
  async getNftCreated(){
-   this.createdList = [];
-   this.hanleListCace("buy");
+
   //  const stickerContract = this.web3Service.getSticker();
    let createAddress = this.nftContractControllerService.getAccountAddress();
    let nftCreatedCount = await this.countOfOwner(createAddress);
-   for(let index = 0 ;index<nftCreatedCount;index++){
+   if(nftCreatedCount === "0"){
+       this.createdList = [];
+       this.feedService.setOwnCreatedList([]);
+       this.hanleListCace("created");
+       this.isLoading = false;
+   }else{
+    for(let index = 0 ;index<nftCreatedCount;index++){
       this.createdList.push(null);
-   }
-   for(let cIndex=0;cIndex<nftCreatedCount;cIndex++){
+    }
+    for(let cIndex=0;cIndex<nftCreatedCount;cIndex++){
     this.handleOwnCreatedData(createAddress,cIndex)
-   }
+    }
+  }
 
  }
 
@@ -326,34 +332,44 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
 }
 
 async getPurchased(){
-  this.purchasedList = [];
-  this.hanleListCace("buy");
-  // const pasarContract = this.web3Service.getPasar();
-  // let createAddress = this.web3Service.getCreateAddress();
-  // let buyerInfo = await pasarContract.methods.getBuyerByAddr(createAddress).call();
+
   let createAddress = this.nftContractControllerService.getAccountAddress();
   let buyerInfo = await this.nftContractControllerService.getPasar().getBuyerByAddr(createAddress);
   console.log("BuyerInfo", buyerInfo);
   let buyerAddr = buyerInfo[1];
   let buyOrderCount = buyerInfo[2];
-  for(let index = 0;index<buyOrderCount;index++){
-    this.purchasedList.push(null);
+  if(buyOrderCount === '0'){
+    this.purchasedList = [];
+    this.feedService.setOwnPurchasedList(this.purchasedList);
+    this.hanleListCace("buy");
+    this.isLoading = false;
+  }else{
+    for(let index = 0;index<buyOrderCount;index++){
+      this.purchasedList.push(null);
+    }
+    this.handleBuyOrder(buyerAddr,buyOrderCount);
   }
-  this.handleBuyOrder(buyerAddr,buyOrderCount);
+
 }
 
 async getOnSale(){
-  this.onSaleList = [];
-  this.hanleListCace("sale");
+
   // const pasarContract = this.web3Service.getPasar();
   let createAddress = this.nftContractControllerService.getAccountAddress();
   let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(createAddress);
   let sellerAddr = sellerInfo[1];
   let orderCount = sellerInfo[3];
-  for(let index = 0;index<orderCount;index++){
+  if(orderCount === '0'){
+    this.onSaleList = [];
+    this.hanleListCace("sale");
+    this.isLoading = false;
+  }else{
+    for(let index = 0;index<orderCount;index++){
       this.onSaleList.push(null);
+    }
+   await this.handleOrder(sellerAddr,orderCount,"sale");
   }
-  await this.handleOrder(sellerAddr,orderCount,"sale");
+
 }
 
 async handleOrder(sellerAddr:any,orderCount:any,listType:any){
@@ -493,6 +509,7 @@ doRefresh(event:any){
   this.isLoading = true;
   switch(this.selectType){
     case "CollectionsPage.created":
+      this.createdList = [];
       this.feedService.setOwnCreatedList([]);
       let cId =  setTimeout(() => {
            this.getNftCreated();
@@ -501,6 +518,7 @@ doRefresh(event:any){
       },1000);
       break;
     case "CollectionsPage.purchased":
+      this.purchasedList = [];
       this.feedService.setOwnPurchasedList([]);
       let pId =  setTimeout(() => {
         this.getPurchased();
@@ -509,6 +527,8 @@ doRefresh(event:any){
        },1000);
       break;
     case "CollectionsPage.onSale":
+      this.onSaleList = [];
+      this.feedService.setOwnOnSaleList([]);
       this.feedService.setOwnOnSaleList([]);
       let oId =  setTimeout(() => {
         this.getOnSale();
@@ -520,8 +540,10 @@ doRefresh(event:any){
 }
 
 hanleListCace(listType:string){
+  console.log("====listType===="+listType);
   switch(listType){
    case "created":
+     console.log("====this.createdList===="+this.createdList.length);
       this.feedService.setOwnCreatedList(this.createdList);
       this.feedService.setData("feed.nft.own.created.list",JSON.stringify(this.createdList));
       break;

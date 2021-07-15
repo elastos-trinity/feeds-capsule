@@ -1583,17 +1583,22 @@ clearData(){
   }
 
  async getPaserList(){
-  this.pasarList = [];
   this.feedService.setPasarList([]);
   // let stickerContract = this.web3Service.getSticker();
   // let pasarContract = this.web3Service.getPasar();
   // let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
   let openOrderCount =  await this.nftContractControllerService.getPasar().getOpenOrderCount();
-  for(let index = 0;index<openOrderCount;index++){
-    this.pasarList.push(null);
-  }
-  for(let pIndex = 0;pIndex<openOrderCount;pIndex++){
-    this.getOpenOrderByIndex(pIndex);
+  if(openOrderCount === '0'){
+    this.pasarList = [];
+    this.feedService.setPasarList([]);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
+  }else{
+    for(let index = 0;index<openOrderCount;index++){
+      this.pasarList.push(null);
+    }
+    for(let pIndex = 0;pIndex<openOrderCount;pIndex++){
+      this.getOpenOrderByIndex(pIndex);
+    }
   }
 }
 
