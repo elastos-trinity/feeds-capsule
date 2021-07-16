@@ -183,12 +183,6 @@ export class BidPage implements OnInit {
       type:'BidPage.blockchain',
       details:this.blockchain
     });
-
-    this.contractDetails.push({
-      type:'BidPage.blockchain',
-      details:this.blockchain
-    });
-
    }
 
    clickBuy(){
