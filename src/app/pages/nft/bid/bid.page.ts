@@ -14,6 +14,7 @@ import { PopoverController} from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 import _ from 'lodash';
+import { UtilService } from 'src/app/services/utilService';
 type detail = {
   type: string,
   details: string
@@ -26,18 +27,19 @@ type detail = {
 export class BidPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public contractDetails:detail[]= [];
-  public owner:string = "test";
-  public name:string = "test";
+  public seller:string = "";
+  public name:string = "";
   public description:string = "test";
   public quantity:string = "1";
   public dateCreated:string = "";
   public expirationDate:string = "";
-  public contractAddress:string = "";
+  public stickerContractAddress:string = "";
+  public parsarContractAddress:string ="";
   public tokenID:string = "";
   public blockchain:string = "Ethereum Sidechain (Elastos)";
-  public fixedPrice:string = "17";
+  public fixedPrice:string = "";
   public bibAmount:string = "";
-  public minimumBid:string ="10";
+  public minimumBid:string ="";
   public currentBid:string ="";
   public showType:string = null;
   public assetUri:string = null;
@@ -46,6 +48,8 @@ export class BidPage implements OnInit {
   public sellerAddress:string = null;
   private curAssetItem = {};
   public popover:any = null;
+  public developerMode:boolean =  false;
+
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -65,21 +69,28 @@ export class BidPage implements OnInit {
       this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
       this.showType = queryParams.showType;
-      this.owner = queryParams.name || "";
+      this.seller = queryParams.sellerAddr || "";
       this.name = queryParams.name || "";
       this.description = queryParams.description || "";
       this.quantity = queryParams.quantity || "1";
       this.tokenID = queryParams.tokenId || "";
-      this.contractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
+      this.stickerContractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
+      this.parsarContractAddress = this.nftContractControllerService.getPasar().getPasarAddress();
       this.assetUri = this.handleImg(asset);
       this.fixedPrice = queryParams.fixedAmount || "";
       this.royalties = queryParams.royalties || "";
       this.saleOrderId = queryParams.saleOrderId || "";
       this.sellerAddress = queryParams.sellerAddr || "";
+      let createTime =  queryParams.createTime || "";
+      if(createTime!=""){
+        let createDate = new Date(parseInt(createTime));
+        this.dateCreated = UtilService.dateFormat(createDate,'yyyy-MM-dd HH:mm:ss');
+      }
     });
   }
 
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.collectContractData();
     this.addEvent();
@@ -117,8 +128,8 @@ export class BidPage implements OnInit {
    collectContractData(){
     this.contractDetails = [];
     this.contractDetails.push({
-      type:'AssetdetailsPage.owner',
-      details:this.owner
+      type:'AssetdetailsPage.seller',
+      details:this.seller
     });
 
     this.contractDetails.push({
@@ -149,11 +160,19 @@ export class BidPage implements OnInit {
         details:this.expirationDate
       });
      }
-
-    this.contractDetails.push({
-      type:'AssetdetailsPage.contractAddress',
-      details:this.contractAddress
+     if(this.developerMode){
+     this.contractDetails.push({
+      type:'AssetdetailsPage.stickerContractAddress',
+      details:this.stickerContractAddress
     });
+    }
+
+    if(this.developerMode){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.pasarContractAddress',
+        details:this.parsarContractAddress
+      });
+    }
 
     this.contractDetails.push({
       type:'AssetdetailsPage.tokenID',
@@ -164,6 +183,12 @@ export class BidPage implements OnInit {
       type:'BidPage.blockchain',
       details:this.blockchain
     });
+
+    this.contractDetails.push({
+      type:'BidPage.blockchain',
+      details:this.blockchain
+    });
+
    }
 
    clickBuy(){
@@ -282,5 +307,4 @@ export class BidPage implements OnInit {
     });;
     }
   }
-
 }

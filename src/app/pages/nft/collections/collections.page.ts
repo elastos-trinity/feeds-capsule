@@ -307,8 +307,9 @@ async handleOwnCreatedData(createAddress:any,cIndex:any){
   let price = "";
   let tokenNum =  tokenInfo[2];
   let tokenUri = tokenInfo[3];
+  let createTime  = tokenInfo[7];
   let royaltyOwner = tokenInfo[4];
-  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex,createAddress);
+  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex,createAddress,createTime);
  }
 
  async countOfOwner(createAddress:any){
@@ -317,7 +318,7 @@ async handleOwnCreatedData(createAddress:any,cIndex:any){
   return nftCreatedCount;
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any,createAddress:any){
+handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any,createAddress:any,createTime:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -338,7 +339,8 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
       "type":type,
       "royalties":royalties,
       "quantity":quantity,
-      "thumbnail":thumbnail
+      "thumbnail":thumbnail,
+      "createTime":createTime*1000
   }
   try{
     this.createdList.splice(cIndex,1,item);
@@ -407,6 +409,7 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any,createAddress:any){
       // const stickerContract = this.web3Service.getSticker();
       let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
       let feedsUri= tokenInfo[3];
+      let createTime = tokenInfo[7];
       feedsUri  = feedsUri.replace("feeds:json:","");
       let tokenNum = tokenInfo[2];
       this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
@@ -430,7 +433,8 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any,createAddress:any){
            "royalties":royalties,
            "quantity":quantity,
            "thumbnail":thumbnail,
-           "sellerAddr":sellerAddr
+           "sellerAddr":sellerAddr,
+           "createTime":createTime*1000
        }
        this.onSaleList.splice(index,1,item);
        this.hanleListCace(listType,createAddress);
@@ -460,6 +464,7 @@ async handleBuyOrder(buyerAddr:any,orderCount:any,createAddress:any){
     // const stickerContract = this.web3Service.getSticker();
     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
     let feedsUri= tokenInfo[3];
+    let createTime = tokenInfo[7];
     feedsUri  = feedsUri.replace("feeds:json:","");
     let tokenNum = tokenInfo[2];
     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
@@ -482,7 +487,8 @@ async handleBuyOrder(buyerAddr:any,orderCount:any,createAddress:any){
          "type":type,
          "royalties":royalties,
          "quantity":quantity,
-         "thumbnail":thumbnail
+         "thumbnail":thumbnail,
+         "createTime":createTime*1000
      }
       this.purchasedList.splice(index,1,item);
        this.hanleListCace("buy",createAddress);

@@ -1467,13 +1467,14 @@ clearData(){
       // let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
       let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
       let tokenUri = tokenInfo[3];
+      let createTime = tokenInfo[7];
       let price = order[5];
       let saleOrderId = order[0];
       let orderState = order[2];
       let sellerAddr = order[7] || "";
       if(orderState==="1"){
         this.native.hideLoading();
-        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
+        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,createTime);
         return;
       }
 
@@ -1627,7 +1628,7 @@ async getOpenOrderByIndex(index:any){
   this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index,createTime);
 }
 
-handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
+handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any,createTime:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -1649,7 +1650,8 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
       "royalties":royalties,
       "quantity":quantity,
       "thumbnail":thumbnail,
-      "sellerAddr":sellerAddr
+      "sellerAddr":sellerAddr,
+      "createTime":createTime*1000,
   }
   item["showType"] = "buy";
   console.log("==home==buy==="+JSON.stringify(item));

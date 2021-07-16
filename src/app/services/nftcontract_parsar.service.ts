@@ -32,6 +32,10 @@ export class NFTContractParsarService {
       return this;
     }
 
+    getPasarAddress(){
+      return this.pasarAddr;
+    }
+
     async getSellerByAddr(sellerAddress){
       if(!this.pasarContract)
         return [];

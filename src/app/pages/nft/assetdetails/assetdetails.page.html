@@ -20,7 +20,10 @@
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
             <h1>{{ contractDetail.type | translate}}</h1>
-            <h2 (click)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
+            <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID'; else inputid" (press)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
+            <ng-template #inputid>
+              <h2>{{ contractDetail.details }}</h2>
+            </ng-template>
         </ion-col>
       </ion-row>
     </div>
@@ -31,7 +34,7 @@
         <ion-row *ngIf="purchaseInfo.details" class="detail-row removeBorder">
           <ion-col size="12" class="left-col">
               <h1>{{ purchaseInfo.type | translate}}</h1>
-              <h2 (click)="copytext(purchaseInfo.details)">{{ purchaseInfo.details }}</h2>
+              <h2  (press)="copytext(purchaseInfo.details)">{{ purchaseInfo.details }}</h2>
           </ion-col>
         </ion-row>
        </div>

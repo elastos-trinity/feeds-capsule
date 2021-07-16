@@ -8,6 +8,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { FeedService} from '../../../services/FeedService';
+import { UtilService } from 'src/app/services/utilService';
 type detail = {
   type: string,
   details: string
@@ -20,13 +22,14 @@ type detail = {
 export class AssetdetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public contractDetails:detail[]= [];
-  public owner:string = "test";
-  public name:string = "test";
-  public description:string = "test";
-  public quantity:string = "1";
+  public owner:string = "";
+  public name:string = "";
+  public description:string = "";
+  public quantity:string = "";
   public dateCreated:string = "";
-  public contractAddress:string = "0x127b53641289999999";
-  public tokenID:string = "0dklnhk678chjjkllkmnk1";
+  public stickerContractAddress:string = "";// sticker 代理合约的地址
+  public parsarContractAddress:string = "";//  parsar 代理合约地址
+  public tokenID:string = "";
 
   public purchaseInfos:detail[] = [];
   public creator:string = "AnnaNFT45";
@@ -37,6 +40,8 @@ export class AssetdetailsPage implements OnInit {
   public purchaseInfoQuantity:string = "1";
   public selectType:string = "AssetdetailsPage.contract";
   public assetUri:string = null;
+  public developerMode:boolean =  false;
+
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -44,6 +49,7 @@ export class AssetdetailsPage implements OnInit {
     private titleBarService:TitleBarService,
     private activatedRoute:ActivatedRoute,
     private nftContractControllerService: NFTContractControllerService,
+    private feedService:FeedService,
     public theme:ThemeService,
     ) {
 
@@ -58,12 +64,19 @@ export class AssetdetailsPage implements OnInit {
       this.quantity = queryParams.quantity || "1";
       this.tokenID = queryParams.tokenId || "";
       // this.contractAddress = this.web3Service.getStickerAddr();
-      this.contractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
+      this.stickerContractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
+      this.parsarContractAddress = this.nftContractControllerService.getPasar().getPasarAddress();
       this.assetUri = this.handleImg(asset);
+      let createTime =  queryParams.createTime || "";
+      if(createTime!=""){
+        let createDate = new Date(parseInt(createTime));
+        this.dateCreated = UtilService.dateFormat(createDate,'yyyy-MM-dd HH:mm:ss');
+      }
     });
   }
 
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.changeType(this.selectType);
     this.addEvent();
@@ -94,10 +107,10 @@ export class AssetdetailsPage implements OnInit {
 
    collectContractData(){
     this.contractDetails = [];
-    this.contractDetails.push({
-      type:'AssetdetailsPage.owner',
-      details:this.owner
-    });
+    // this.contractDetails.push({
+    //   type:'AssetdetailsPage.owner',
+    //   details:this.owner
+    // });
 
     this.contractDetails.push({
       type:'AssetdetailsPage.name',
@@ -120,10 +133,18 @@ export class AssetdetailsPage implements OnInit {
         details:this.dateCreated
       });
     }
+
     this.contractDetails.push({
-      type:'AssetdetailsPage.contractAddress',
-      details:this.contractAddress
+      type:'AssetdetailsPage.stickerContractAddress',
+      details:this.stickerContractAddress
     });
+
+    if(this.developerMode){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.pasarContractAddress',
+        details:this.parsarContractAddress
+      });
+    }
 
     this.contractDetails.push({
       type:'AssetdetailsPage.tokenID',
