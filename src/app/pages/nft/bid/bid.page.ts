@@ -36,7 +36,7 @@ export class BidPage implements OnInit {
   public stickerContractAddress:string = "";
   public parsarContractAddress:string ="";
   public tokenID:string = "";
-  public blockchain:string = "Ethereum Sidechain (Elastos)";
+  public blockchain:string = "Elastos Smart Chain (ESC)";
   public fixedPrice:string = "";
   public bibAmount:string = "";
   public minimumBid:string ="";
@@ -128,7 +128,7 @@ export class BidPage implements OnInit {
    collectContractData(){
     this.contractDetails = [];
     this.contractDetails.push({
-      type:'AssetdetailsPage.seller',
+      type:'AssetdetailsPage.owner',
       details:this.seller
     });
 
@@ -160,12 +160,6 @@ export class BidPage implements OnInit {
         details:this.expirationDate
       });
      }
-     if(this.developerMode){
-     this.contractDetails.push({
-      type:'AssetdetailsPage.stickerContractAddress',
-      details:this.stickerContractAddress
-    });
-    }
 
     if(this.developerMode){
       this.contractDetails.push({

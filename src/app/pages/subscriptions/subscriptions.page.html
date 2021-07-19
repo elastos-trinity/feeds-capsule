@@ -1,0 +1,28 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.beingRefresh'|translate}}">
+    </ion-refresher-content>
+  </ion-refresher>
+   <app-following [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+</ion-content>
+<!---------------- ADD share menu---------------->
+<app-sharemenu
+ *ngIf="hideSharMenuComponent"
+ [nodeId] = "shareNodeId"
+ [feedId] = "shareFeedId"
+ [isShowTitle] = "isShowTitle"
+ [isShowQrcode] = "isShowQrcode"
+ [isShowUnfollow] = "isShowUnfollow"
+ [isShowInfo] = "isShowInfo"
+ [isPreferences]="isPreferences"
+ [feedName] = "feedName"
+ [qrCodeString]="qrCodeString"
+ (hideShareMenu)="hideShareMenu($event)"
+>
+</app-sharemenu>

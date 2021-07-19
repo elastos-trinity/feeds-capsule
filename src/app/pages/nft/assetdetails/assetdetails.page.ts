@@ -29,10 +29,11 @@ export class AssetdetailsPage implements OnInit {
   public dateCreated:string = "";
   public stickerContractAddress:string = "";// sticker 代理合约的地址
   public parsarContractAddress:string = "";//  parsar 代理合约地址
+  public blockchain:string = "Elastos Smart Chain (ESC)";
   public tokenID:string = "";
 
   public purchaseInfos:detail[] = [];
-  public creator:string = "AnnaNFT45";
+  public creator:string = "";
   public datePurchased:string = "2020-05-06";
   public price:number = 100;
   public currency:string = "ELASC";
@@ -72,6 +73,7 @@ export class AssetdetailsPage implements OnInit {
         let createDate = new Date(parseInt(createTime));
         this.dateCreated = UtilService.dateFormat(createDate,'yyyy-MM-dd HH:mm:ss');
       }
+      this.creator = queryParams.royalties || "";
     });
   }
 
@@ -107,10 +109,12 @@ export class AssetdetailsPage implements OnInit {
 
    collectContractData(){
     this.contractDetails = [];
-    // this.contractDetails.push({
-    //   type:'AssetdetailsPage.owner',
-    //   details:this.owner
-    // });
+    if(this.creator!=""){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.creator',
+        details:this.creator
+      });
+    }
 
     this.contractDetails.push({
       type:'AssetdetailsPage.name',
@@ -149,6 +153,11 @@ export class AssetdetailsPage implements OnInit {
     this.contractDetails.push({
       type:'AssetdetailsPage.tokenID',
       details:this.tokenID
+    });
+
+    this.contractDetails.push({
+      type:'BidPage.blockchain',
+      details:this.blockchain
     });
 
 

@@ -559,7 +559,7 @@ export const en = {
         "title": "Collectible Details",
         "asset": "Asset",
         "contractDetails": "Contract Details",
-        "seller": "Seller",
+        "owner":"Owner",
         "name": "Name",
         "description": "Description",
         "quantity": "Quantity",

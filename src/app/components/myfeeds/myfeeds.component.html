@@ -63,4 +63,22 @@
       </ion-col>
     </ion-row>
   </ion-item>
+
+  <ion-item  lines="none" (click)="clickFollowing()" class="removeBorder" style="margin-top:-15px;">
+    <ion-row class="channel-row ion-activatable ripple">
+      <ion-col
+        size="2.5"
+        class="left-col"
+      >
+      <div class="radius_50">
+        <img src="assets/images/people-fill.svg"/>
+      </div>
+      </ion-col>
+      <ion-col>
+        <div class="new-feed-div" style="padding-left:0px;">
+          <div class="new-feed">{{ 'ProfilePage.following'|translate }}</div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-item>
 </ion-list>

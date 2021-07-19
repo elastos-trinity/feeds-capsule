@@ -1,7 +1,5 @@
 import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
 import { FeedService } from '../../services/FeedService'
-import { IonTabs } from '@ionic/angular';
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { ViewHelper } from '../../services/viewhelper.service';
@@ -18,8 +16,8 @@ export class FollowingComponent implements OnInit {
   @Input() nodeStatus:any = {};
   @Output() toFollowPage = new EventEmitter();
   constructor(
-    private feedspage: FeedsPage,
-    private tabs: IonTabs,
+    //private feedspage: FeedsPage,
+    //private tabs: IonTabs,
     private feedService:FeedService,
     public theme:ThemeService,
     private viewHelper:ViewHelper) {
@@ -38,11 +36,6 @@ export class FollowingComponent implements OnInit {
     this.read(nodeId, channelId);
     this.toFollowPage.emit({"nodeId":nodeId,"channelId":channelId,"page":"/channels"});
     //this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
-  }
-
-  exploreFeeds(){
-    this.tabs.select("search");
-    this.feedspage.search();
   }
 
   parseAvatar(avatar: string): string{

@@ -560,7 +560,7 @@ export const zh = {
         "title": "收藏品明细",
         "asset": "资产",
         "contractDetails": "合约明细",
-        "seller": "出售者",
+        "owner": "所有者",
         "name": "名称",
         "description": "描述",
         "quantity": "数量",

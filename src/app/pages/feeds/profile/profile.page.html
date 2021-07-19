@@ -47,8 +47,8 @@
       </div>
     </div>
 
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
-    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
+    <!-- <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following> -->
     <app-likes
        *ngIf="selectType == 'ProfilePage.myLikes'"
        [hideDeletedPosts] = "hideDeletedPosts"

@@ -4,7 +4,7 @@
   <p>{{ 'FollowingComponent.emptyDes' | translate }}</p>
 </div>
 
-<ion-list *ngIf="followingList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+<ion-list *ngIf="followingList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode" style="padding-top:5px;">
   <ion-item
     *ngFor="let channel of followingList"
     [class.removeBorder]="channel === followingList[followingList.length - 1]"

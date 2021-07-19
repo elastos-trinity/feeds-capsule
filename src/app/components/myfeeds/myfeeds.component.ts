@@ -16,6 +16,7 @@ export class MyfeedsComponent implements OnInit {
   @Input() channels:any = [];
   @Input() nodeStatus:any = {};
   @Output () toFeedPage = new EventEmitter();
+  @Output () subsciptions = new EventEmitter();
   public popover:any = "";
   constructor(
     private feedService: FeedService,
@@ -88,6 +89,10 @@ export class MyfeedsComponent implements OnInit {
       }else{
         this.native.navigateForward(['bindservice/learnpublisheraccount'],"");
       }
+  }
+
+  clickFollowing(){
+    this.subsciptions.emit();
   }
 }
 

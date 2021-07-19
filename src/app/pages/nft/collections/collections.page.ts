@@ -414,7 +414,7 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any,createAddress:any){
       let tokenNum = tokenInfo[2];
       this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
        let type = result["type"] || "single";
-       let royalties = result["royalties"] || "1";
+       let royalties = result["royalties"] || "";
        let quantity = tokenNum;
        let fixedAmount = price || "1";
        let thumbnail = result["thumbnail"] || "";
@@ -469,7 +469,7 @@ async handleBuyOrder(buyerAddr:any,orderCount:any,createAddress:any){
     let tokenNum = tokenInfo[2];
     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
      let type = result["type"] || "single";
-     let royalties = result["royalties"] || "1";
+     let royalties = result["royalties"] || "";
      let quantity = tokenNum;
      let fixedAmount = price || "1";
      let thumbnail = result["thumbnail"] || "";

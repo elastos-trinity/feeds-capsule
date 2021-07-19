@@ -50,7 +50,8 @@ const routes: Routes = [
   { path:'channelsviewall',loadChildren: './pages/feeds/search/search.module#SearchPageModule'},
   { path: 'currencyviewall', loadChildren: './pages/nft/currencyviewall/currencyviewall.module#CurrencyviewallPageModule' },
   { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' },
-  { path: 'walletteach', loadChildren:'./pages/walletteach/walletteach.module#WalletteachPageModule'}
+  { path: 'walletteach', loadChildren:'./pages/walletteach/walletteach.module#WalletteachPageModule'},
+  { path: 'subscriptions',loadChildren:'./pages/subscriptions/subscriptions.module#SubscriptionsPageModule'}
 ];
 
 @NgModule({

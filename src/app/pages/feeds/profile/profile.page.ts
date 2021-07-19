@@ -1477,4 +1477,9 @@ async disconnect(that:any){
     console.log("updateWalletAddress" , this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
+
+  subsciptions(){
+  this.clearData();
+  this.native.navigateForward(["subscriptions"],"");
+  }
 }
