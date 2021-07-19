@@ -140,7 +140,6 @@ export class FeedsPage implements OnInit {
       this.feedService.setCurTab(this.currentTab);
     }
 
-
     tabChanged(event){
       this.currentTab = event.tab;
     }

@@ -4987,7 +4987,7 @@ export class FeedService {
     this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
 
-  addFeed(feedUrl: string, avatar: string, follower: number, feedName: string): Promise<string>{
+  addFeed(feedUrl: string, avatar: string, follower: number, feedName: string, ownerName: string, feedDes: string): Promise<string>{
     return new Promise(async (resolve, reject) =>{
 
       let decodeResult:FeedsData.FeedUrl = this.addFeedService.decodeFeedUrl(feedUrl);
@@ -5001,7 +5001,7 @@ export class FeedService {
         return ;
       }
 
-      this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
+      this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName, ownerName, feedDes).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           this.logUtils.logd("The service is already a friend, nodeId is "+nodeId);
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);

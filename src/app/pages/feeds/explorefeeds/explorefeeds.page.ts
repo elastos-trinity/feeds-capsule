@@ -184,7 +184,7 @@ export class ExplorefeedsPage implements OnInit {
           return ;
     }
 
-    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+    this.feedService.addFeed(result,"",0,"", "", "").then((isSuccess)=>{
         if (isSuccess){
           this.native.pop();
           return;
@@ -370,7 +370,7 @@ export class ExplorefeedsPage implements OnInit {
   }
 
   addFeedUrl(result: string){
-    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+    this.feedService.addFeed(result,"",0,"","","").then((isSuccess)=>{
       if (isSuccess){
           this.zone.run(()=>{
             this.searchbar.value = "";

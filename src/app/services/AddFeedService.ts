@@ -54,7 +54,7 @@ export class AddFeedService {
         await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
     }
 
-    addFeed(decodeResult:FeedsData.FeedUrl, nodeId: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
+    addFeed(decodeResult:FeedsData.FeedUrl, nodeId: string, inputAvatar: string, inputFollower: number, inputFeedName: string, ownerName: string, feedDes: string): Promise<FeedsData.ToBeAddedFeed>{
         return new Promise(async (resolve, reject) =>{
             this.logUtils.logd("Start addFeed process, nodeId is "+nodeId,TAG);
             try{
@@ -84,7 +84,8 @@ export class AddFeedService {
                 this.tobeAddedFeedMap[nodeId][decodeResult.feedId] =
                     this.generateToBeAddedFeed(nodeId, decodeResult.carrierAddress, decodeResult.feedId,
                         feedName, decodeResult.did, decodeResult.serverUrl, decodeResult.feedUrl,
-                        FeedsData.FollowFeedStatus.NONE, FeedsData.FriendState.NONE_STATE, avatar, follower);
+                        FeedsData.FollowFeedStatus.NONE, FeedsData.FriendState.NONE_STATE, avatar, follower,
+                        ownerName, feedDes);
 
                 this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.ADD_FRIEND_READY);
 
@@ -220,7 +221,7 @@ export class AddFeedService {
 
     generateToBeAddedFeed(nodeId: string, carrierAddress: string, feedId: number, feedName: string,
         did: string, serverUrl: string, feedUrl: string, status : FeedsData.FollowFeedStatus, state: FeedsData.FriendState,
-        avatar: string, follower: number): FeedsData.ToBeAddedFeed{
+        avatar: string, follower: number, ownerName: string, feedDes: string): FeedsData.ToBeAddedFeed{
         return {
             nodeId          : nodeId,
             did             : did,
@@ -232,7 +233,9 @@ export class AddFeedService {
             status          : status,
             friendState     : state,
             avatar          : avatar,
-            follower        : follower
+            follower        : follower,
+            ownerName       : ownerName,
+            feedDes         : feedDes
         }
     }
 

@@ -309,6 +309,8 @@ declare namespace FeedsData{
         friendState     : FriendState
         avatar          : string
         follower        : number
+        ownerName       : string
+        feedDes         : string
     }
 
     const enum PersistenceKey{

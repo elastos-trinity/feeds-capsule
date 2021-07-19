@@ -396,7 +396,7 @@ export class SearchPage implements OnInit {
           return ;
     }
 
-    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+    this.feedService.addFeed(result,"",0,"", "", "").then((isSuccess)=>{
         if (isSuccess){
           this.native.pop();
           return;
@@ -532,15 +532,17 @@ export class SearchPage implements OnInit {
     let avatar =  feedInfo["feedsAvatar"];
     let followers = feedInfo["followers"];
     let feedName = feedInfo["name"];
+    let desc = feedInfo["description"];
+    let ownerName = feedInfo["ownerName"];
+    console.log("discoverSubscribe ", feedInfo);
 
-    this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
+    this.feedService.addFeed(feedUrl, avatar, followers, feedName, ownerName, desc).then((isSuccess)=>{
       if(isSuccess){
         this.zone.run(()=>{
           //this.init();
         });
       }
     }).catch((err)=>{
-
     });
   }
 
@@ -563,7 +565,7 @@ export class SearchPage implements OnInit {
   }
 
   addFeedUrl(result: string){
-    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+    this.feedService.addFeed(result,"",0,"","","").then((isSuccess)=>{
       if (isSuccess){
           this.zone.run(()=>{
             this.searchbar.value = "";
@@ -605,6 +607,23 @@ export class SearchPage implements OnInit {
         return "";
     }
     return channelDes;
+  }
+
+  getAddingFeedOwner(addingchannel){
+    console.log("getAddingFeedOwner addingchannel",addingchannel);
+    let ownerName = "common.obtain";
+    let feed = addingchannel||"";
+    if (feed != "")
+      ownerName = addingchannel["ownerName"]
+    return "@"+ownerName;
+  }
+
+  getAddingFeedDes(addingchannel){
+    let description = ""
+    let feed = addingchannel||"";
+    if (feed != "")
+      description = addingchannel["feedDes"]
+    return description;
   }
 
 
